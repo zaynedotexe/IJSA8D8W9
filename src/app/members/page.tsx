@@ -35,7 +35,29 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
   const ytid = m.backgroundUrl && !isVideo ? ytId(m.backgroundUrl) : null;
   const thumb = ytid ? "https://i.ytimg.com/vi/" + ytid + "/hqdefault.jpg" : null;
   const [hovering, setHovering] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const vidRef = useRef<HTMLVideoElement | null>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !m.backgroundUrl) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setMounted(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setMounted(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [m.backgroundUrl]);
 
   function onEnter() {
     setHovering(true);
@@ -45,13 +67,6 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
 
   function onLeave() {
     setHovering(false);
-    const v = vidRef.current;
-    if (v) {
-      v.pause();
-      try {
-        v.currentTime = 0;
-      } catch {}
-    }
   }
   return (
     <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
@@ -85,7 +100,7 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
           </span>
         </span>
       </Link>
-      <div className={"md:col-span-8 md:[perspective:1400px] " + (artFirst ? "md:order-1" : "md:order-2")}>
+      <div ref={cardRef} className={"md:col-span-8 md:[perspective:1400px] " + (artFirst ? "md:order-1" : "md:order-2")}>
         <Link
         href={"/" + encodeURIComponent(m.username || m.id)}
           aria-label={"Open " + display + "'s profile"}
@@ -100,18 +115,22 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
         >
           {m.backgroundUrl ? (
             isVideo ? (
-              <video ref={vidRef} src={m.backgroundUrl} muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
-            ) : ytid && hovering ? (
-              <iframe
-                src={"https://www.youtube-nocookie.com/embed/" + ytid + "?autoplay=1&mute=1&loop=1&playlist=" + ytid + "&controls=0&rel=0&playsinline=1"}
-                title=""
-                aria-hidden="true"
-                allow="autoplay; encrypted-media"
-                className="absolute pointer-events-none"
-                style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
-              />
+              <video ref={vidRef} src={mounted ? m.backgroundUrl : undefined} muted loop playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover" />
             ) : (
-              <img src={thumb || m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <span className="absolute inset-0 block">
+                <img src={thumb || m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" className={"absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 " + (ytid && mounted && hovering ? "opacity-0" : "opacity-100")} />
+                {ytid && mounted ? (
+                  <iframe
+                    src={"https://www.youtube-nocookie.com/embed/" + ytid + "?autoplay=1&mute=1&loop=1&playlist=" + ytid + "&controls=0&rel=0&playsinline=1"}
+                    title=""
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    allow="autoplay; encrypted-media"
+                    className={"absolute pointer-events-none transition-opacity duration-500 " + (hovering ? "opacity-100" : "opacity-0")}
+                    style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
+                  />
+                ) : null}
+              </span>
             )
           ) : (
             <div className="absolute inset-0 bg-grid opacity-70" />
