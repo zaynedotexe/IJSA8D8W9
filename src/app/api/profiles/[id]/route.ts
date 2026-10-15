@@ -62,10 +62,23 @@ export async function GET(_req: Request, ctx: { params: { id: string } }) {
       include: { discordIdentity: true, affiliation: true }
     });
     if (!profile) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    const roles = await prisma.roleConfig.findMany({
-      where: { roleId: { in: profile.discordIdentity?.roleIds || [] }, visible: true }
-    });
-    return NextResponse.json({ profile: publicShape(profile as never), roles });
+    const [roles, allAffiliations] = await Promise.all([
+      prisma.roleConfig.findMany({
+        where: { roleId: { in: profile.discordIdentity?.roleIds || [] }, visible: true }
+      }),
+      prisma.affiliation.findMany({ where: { visible: true }, orderBy: { order: "asc" } })
+    ]);
+    const memberGuilds = profile.discordIdentity?.guildIds || [];
+    const servers = allAffiliations
+      .filter((a) => a.discordGuildId)
+      .map((a) => ({
+        id: a.id,
+        name: a.name,
+        logoUrl: a.logoUrl,
+        externalUrl: a.externalUrl,
+        isMember: memberGuilds.includes(a.discordGuildId as string)
+      }));
+    return NextResponse.json({ profile: publicShape(profile as never), roles, servers });
   } catch {
     return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
   }

@@ -51,6 +51,7 @@ function localDate(tz: string | null): string {
 export default function MemberPage({ params }: { params: { id: string } }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<{ roleId: string; name: string; icon?: string | null; unicodeEmoji?: string | null }[]>([]);
+  const [servers, setServers] = useState<{ id: string; name: string; logoUrl: string | null; externalUrl: string | null; isMember: boolean }[]>([]);
   const [count, setCount] = useState<number | null>(null);
   const [missing, setMissing] = useState(false);
   const [bgOk, setBgOk] = useState(true);
@@ -70,6 +71,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
         if (!d) return;
         setProfile(d.profile);
         setRoles(d.roles || []);
+        setServers(d.servers || []);
         setCount(d.profile.views);
       })
       .catch(() => setMissing(true));
@@ -181,20 +183,30 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </section>
 
           <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3">
-            {profile.affiliation ? (
-              <Link href="/affiliations" className="group block rounded-2xl overflow-hidden border border-line hover:border-white transition-colors">
-                {profile.affiliation.logoUrl ? (
-                  <img src={profile.affiliation.logoUrl} alt={profile.affiliation.name} loading="lazy" className="w-full h-36 object-cover grayscale" />
-                ) : (
-                  <div className="w-full h-36 grid place-items-center bg-[#0b0b0b] font-display text-4xl">{profile.affiliation.name.slice(0, 1)}</div>
-                )}
-                <div className="p-4 text-left">
-                  <div className="font-display tracking-wide leading-tight">{profile.affiliation.name}</div>
-                  <div className="text-fog text-xs mt-1 line-clamp-2">{profile.affiliation.description}</div>
-                  <div className="mono text-[10px] tracking-[0.25em] text-mist mt-2">AFFILIATED →</div>
+            <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3">SERVERS</div>
+            {servers.length === 0 ? (
+              <div className="rounded-2xl border border-line p-4 mono text-[10px] tracking-[0.25em] text-mist">NO LINKED SERVERS</div>
+            ) : (
+              servers.map((s) => (
+                <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0">
+                  {s.logoUrl ? (
+                    <img src={s.logoUrl} alt={s.name} loading="lazy" className="w-full h-28 object-cover grayscale" />
+                  ) : (
+                    <div className="w-full h-28 grid place-items-center bg-[#0b0b0b] font-display text-3xl">{s.name.slice(0, 1)}</div>
+                  )}
+                  <div className="p-4 text-left">
+                    <div className="font-display tracking-wide leading-tight">{s.name}</div>
+                    <div className="mono text-[10px] tracking-[0.25em] mt-2 flex items-center gap-2">
+                      <span className={"w-1.5 h-1.5 rounded-full " + (s.isMember ? "bg-white" : "bg-[#3a3a3a]")} aria-hidden="true" />
+                      <span className={s.isMember ? "text-white" : "text-mist"}>{s.isMember ? "MEMBER" : "NOT IN SERVER"}</span>
+                    </div>
+                    {s.externalUrl ? (
+                      <a href={s.externalUrl} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-[0.25em] text-mist hover:text-white mt-2 inline-block">JOIN ↗</a>
+                    ) : null}
+                  </div>
                 </div>
-              </Link>
-            ) : null}
+              ))
+            )}
             <Link href="/" className="group block rounded-2xl overflow-hidden border border-line hover:border-white transition-colors mt-4">
               <img src="/lonestar-wordmark.png" alt="Lonestar" loading="lazy" className="w-full h-28 object-contain bg-[#0b0b0b] p-4" />
               <div className="p-4 text-left">

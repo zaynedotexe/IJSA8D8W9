@@ -63,6 +63,7 @@ export async function GET(req: Request) {
           isMember,
           flags: typeof user.flags === "number" ? user.flags : 0,
           premiumType: typeof user.premium_type === "number" ? user.premium_type : null,
+          guildIds: guilds.map((g) => g.id),
           lastSyncAt: new Date(),
           ...(nickname !== undefined ? { nickname } : {}),
           ...(roleIds !== undefined ? { roleIds } : {}),

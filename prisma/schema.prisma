@@ -15,6 +15,7 @@ model DiscordIdentity {
   avatar       String?
   nickname     String?
   roleIds      String[] @default([])
+  guildIds     String[] @default([])
   flags        Int      @default(0)
   premiumType  Int?
   boosting     Boolean  @default(false)
@@ -67,12 +68,13 @@ model RoleConfig {
 }
 
 model Affiliation {
-  id          String    @id @default(cuid())
-  name        String
-  description String    @default("") @db.Text
-  logoUrl     String?   @db.VarChar(2048)
-  externalUrl String?   @db.VarChar(2048)
-  category    String?   @db.VarChar(80)
+  id             String    @id @default(cuid())
+  name           String
+  description    String    @default("") @db.Text
+  logoUrl        String?   @db.VarChar(2048)
+  externalUrl    String?   @db.VarChar(2048)
+  discordGuildId String?   @db.VarChar(32)
+  category       String?   @db.VarChar(80)
   order       Int       @default(0)
   visible     Boolean   @default(true)
   createdAt   DateTime  @default(now())
