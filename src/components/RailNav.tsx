@@ -60,7 +60,10 @@ export default function RailNav() {
           <img src="/lonestar-emblem.png" alt="Lonestar" className="w-11 h-11 rounded-full object-cover border border-line hover:border-white transition-colors" />
         </Link>
         {items.map((it) => {
-          const active = pathname === it.href || (it.href !== "/" && pathname.startsWith(it.href));
+          const active =
+            pathname === it.href ||
+            (it.href !== "/" && pathname.startsWith(it.href + "/")) ||
+            (it.href === "/members" && pathname.startsWith("/member/"));
           return (
             <Link
               key={it.href + it.label}
