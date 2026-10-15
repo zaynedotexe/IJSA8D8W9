@@ -11,13 +11,14 @@ type Player = {
 
 declare global {
   interface Window {
-    YT?: { Player: new (el: HTMLElement, opts: unknown) => Player; PlayerState?: { PLAYING: number; ENDED: number };
-    };
-    lonestarYtReady?: () => void;
+    YT?: { Player: new (el: HTMLElement, opts: unknown) => Player; PlayerState?: { PLAYING: number; ENDED: number } };
+    onYouTubeIframeAPIReady?: () => void;
   }
 }
 
 let apiLoading: Promise<void> | null = null;
+let apiTagAdded = false;
+const apiWaiters: (() => void)[] = [];
 
 function loadApi(): Promise<void> {
   if (typeof window === "undefined") return Promise.reject(new Error("no window"));
@@ -25,18 +26,28 @@ function loadApi(): Promise<void> {
   if (apiLoading) return apiLoading;
   apiLoading = new Promise((resolve, reject) => {
     const timer = window.setTimeout(() => reject(new Error("timeout")), 12000);
-    window.lonestarYtReady = () => {
+    apiWaiters.push(() => {
       window.clearTimeout(timer);
       resolve();
-    };
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    tag.async = true;
-    tag.onerror = () => {
-      window.clearTimeout(timer);
-      reject(new Error("blocked"));
-    };
-    document.head.appendChild(tag);
+    });
+    const w = window as unknown as { onYouTubeIframeAPIReady?: () => void };
+    if (!w.onYouTubeIframeAPIReady) {
+      w.onYouTubeIframeAPIReady = () => {
+        const waiting = apiWaiters.splice(0);
+        waiting.forEach((fn) => fn());
+      };
+    }
+    if (!apiTagAdded) {
+      apiTagAdded = true;
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      tag.async = true;
+      tag.onerror = () => {
+        window.clearTimeout(timer);
+        reject(new Error("blocked"));
+      };
+      document.head.appendChild(tag);
+    }
   });
   return apiLoading;
 }
