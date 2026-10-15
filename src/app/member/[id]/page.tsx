@@ -143,7 +143,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
         <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
           <aside
-            className="rounded-3xl glass shine-card p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1"
+            className="rounded-3xl glass shine-card float-a p-6 text-center order-2 lg:order-1"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
@@ -207,7 +207,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </section>
 
           <aside
-            className="rounded-3xl glass shine-card p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3"
+            className="rounded-3xl glass shine-card float-b p-5 order-3"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3">SERVERS</div>
