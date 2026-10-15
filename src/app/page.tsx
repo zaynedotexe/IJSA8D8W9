@@ -53,7 +53,7 @@ export default async function Home() {
   return (
     <div>
       <LoadingScreen />
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden min-h-[92vh] flex flex-col justify-center">
         <CodeTexture
           lines={["$ whoami", "> lonestar", "const lonestar = { mode: 'underground' }", "0xLONESTAR", "$ nmap -sS collective", "[ok] identity verified"]}
           className="opacity-80"
