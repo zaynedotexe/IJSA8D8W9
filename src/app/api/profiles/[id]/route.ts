@@ -121,10 +121,6 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
       data: {
         bio: data.bio !== undefined ? data.bio.slice(0, 500) : undefined,
         backgroundUrl: data.backgroundUrl !== undefined ? (data.backgroundUrl === "" ? null : data.backgroundUrl) : undefined,
-        musicUrl: data.musicUrl !== undefined ? (data.musicUrl === "" ? null : data.musicUrl) : undefined,
-        trackTitle: data.trackTitle !== undefined ? (data.trackTitle === "" ? null : data.trackTitle.slice(0, 160)) : undefined,
-        trackArtist: data.trackArtist !== undefined ? (data.trackArtist === "" ? null : data.trackArtist.slice(0, 160)) : undefined,
-        trackCover: data.trackCover !== undefined ? (data.trackCover === "" ? null : data.trackCover) : undefined,
         location: data.location !== undefined ? (data.location === "" ? null : data.location.slice(0, 120)) : undefined,
         timezone: data.timezone !== undefined ? (data.timezone === "" ? null : data.timezone.slice(0, 80)) : undefined
       },
