@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import TypewriterBio from "@/components/TypewriterBio";
+import RoleIcon from "@/components/RoleIcon";
 import MusicPlayer from "@/components/MusicPlayer";
 import ProfileViewTracker from "@/components/ProfileViewTracker";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -45,7 +46,7 @@ function localDate(tz: string | null): string {
 
 export default function MemberPage({ params }: { params: { id: string } }) {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [roles, setRoles] = useState<{ roleId: string; name: string }[]>([]);
+  const [roles, setRoles] = useState<{ roleId: string; name: string; icon?: string | null; unicodeEmoji?: string | null }[]>([]);
   const [count, setCount] = useState<number | null>(null);
   const [missing, setMissing] = useState(false);
   const [bgOk, setBgOk] = useState(true);
@@ -165,7 +166,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             {roles.length > 0 ? (
               <div className="flex flex-wrap justify-center gap-1.5 mt-5">
                 {roles.map((r) => (
-                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] bg-white text-black rounded-full px-3.5 py-1.5">{r.name}</span>
+                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] bg-white text-black rounded-full px-3.5 py-1.5 flex items-center gap-1.5">
+                    <RoleIcon roleId={r.roleId} icon={r.icon} emoji={r.unicodeEmoji} size={13} />
+                    {r.name}
+                  </span>
                 ))}
               </div>
             ) : null}

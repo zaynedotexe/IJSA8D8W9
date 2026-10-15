@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import RoleIcon from "@/components/RoleIcon";
 
 export type RowMember = {
   id: string;
@@ -9,7 +10,7 @@ export type RowMember = {
   globalName: string | null;
   avatar: string | null;
   nickname: string | null;
-  roles: { roleId: string; name: string }[];
+  roles: { roleId: string; name: string; icon?: string | null; unicodeEmoji?: string | null }[];
   affiliation?: { name: string } | null;
 };
 
@@ -38,7 +39,8 @@ export default function MemberRow({ m, index }: { m: RowMember; index: number })
       </span>
       <span className="hidden md:flex gap-1.5 shrink-0">
         {m.roles.slice(0, 3).map((r) => (
-          <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line group-hover:border-black/30 text-fog group-hover:text-black/70 rounded-full px-3 py-1">
+          <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line group-hover:border-black/30 text-fog group-hover:text-black/70 rounded-full px-3 py-1 flex items-center gap-1.5">
+            <RoleIcon roleId={r.roleId} icon={r.icon} emoji={r.unicodeEmoji} size={12} />
             {r.name}
           </span>
         ))}

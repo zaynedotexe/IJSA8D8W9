@@ -23,13 +23,15 @@ function avatarOf(user) {
 }
 
 function toPayload(member) {
+  const roles = Array.from(member.roles.cache.values()).filter((r) => r.id !== GUILD_ID);
   return {
     discordId: member.user.id,
     username: member.user.username,
     globalName: member.user.globalName || null,
     avatar: avatarOf(member.user),
     nickname: member.nickname || null,
-    roleIds: Array.from(member.roles.cache.keys()).filter((id) => id !== GUILD_ID),
+    roleIds: roles.map((r) => r.id),
+    roles: roles.map((r) => ({ id: r.id, name: r.name, icon: r.icon || null, unicodeEmoji: r.unicodeEmoji || null })),
     isMember: true,
     joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
   };

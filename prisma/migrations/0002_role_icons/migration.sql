@@ -1,0 +1,2 @@
+ALTER TABLE "RoleConfig" ADD COLUMN "icon" VARCHAR(128);
+ALTER TABLE "RoleConfig" ADD COLUMN "unicodeEmoji" VARCHAR(32);

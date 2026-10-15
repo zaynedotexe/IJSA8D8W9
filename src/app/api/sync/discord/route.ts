@@ -49,6 +49,28 @@ export async function POST(req: Request) {
           lastSyncAt: new Date()
         }
       });
+      if (d.roles) {
+        for (const r of d.roles) {
+          try {
+            await prisma.roleConfig.upsert({
+              where: { roleId: r.id },
+              create: {
+                roleId: r.id,
+                name: r.name.slice(0, 120),
+                priority: 100,
+                visible: false,
+                icon: r.icon || null,
+                unicodeEmoji: r.unicodeEmoji || null
+              },
+              update: {
+                name: r.name.slice(0, 120),
+                icon: r.icon || null,
+                unicodeEmoji: r.unicodeEmoji || null
+              }
+            });
+          } catch {}
+        }
+      }
     }
     await prisma.syncState.upsert({
       where: { kind: "discord" },

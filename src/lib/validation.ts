@@ -68,9 +68,25 @@ export const syncPayloadSchema = z.object({
   avatar: z.string().max(2048).nullable().optional(),
   nickname: z.string().max(100).nullable().optional(),
   roleIds: z.array(z.string().max(32)).max(100).optional(),
+  roles: z
+    .array(
+      z.object({
+        id: z.string().min(3).max(32),
+        name: z.string().max(120),
+        icon: z.string().max(128).nullable().optional(),
+        unicodeEmoji: z.string().max(32).nullable().optional()
+      })
+    )
+    .max(100)
+    .optional(),
   isMember: z.boolean().optional(),
   joinedAt: z.string().nullable().optional()
 });
+
+export function roleIconUrl(roleId: string, icon: string | null | undefined): string | null {
+  if (!icon) return null;
+  return "https://cdn.discordapp.com/role-icons/" + roleId + "/" + icon + ".webp?size=64";
+}
 
 export function toSafeMusicKind(url: string): string {
   const lower = url.toLowerCase();
