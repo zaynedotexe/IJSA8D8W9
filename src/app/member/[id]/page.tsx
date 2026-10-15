@@ -6,6 +6,7 @@ import TypewriterBio from "@/components/TypewriterBio";
 import YouTubeBg from "@/components/YouTubeBg";
 import DiscordBadges from "@/components/DiscordBadges";
 import RoleIcon from "@/components/RoleIcon";
+import { accentFor } from "@/lib/site";
 import { glow } from "@/lib/glow";
 import MusicPlayer from "@/components/MusicPlayer";
 import ProfileViewTracker from "@/components/ProfileViewTracker";
@@ -275,9 +276,15 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             ) : (
               <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto thin-scroll lg:-mx-1 lg:px-1">
               {servers.filter((s) => s.isMember || s.isOwner).map((s) => (
-                <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0">
+                <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0 group/logo">
                   {s.logoUrl ? (
-                    <img src={s.logoUrl} alt={s.name} loading="lazy" className="w-full h-28 object-cover grayscale" />
+                    <img
+                      src={s.logoUrl}
+                      alt={s.name}
+                      loading="lazy"
+                      style={{ "--acc": accentFor(s.name) } as React.CSSProperties}
+                      className="w-full h-28 object-cover grayscale group-hover/logo:grayscale-0 transition-all duration-500 group-hover/logo:shadow-[0_0_36px_6px_var(--acc)]"
+                    />
                   ) : (
                     <div className="w-full h-28 grid place-items-center bg-[#0b0b0b] font-display text-3xl">{s.name.slice(0, 1)}</div>
                   )}

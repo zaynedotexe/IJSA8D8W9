@@ -1,3 +1,13 @@
+export const ACCENTS: Record<string, string> = {
+  lannister: "#ff2020",
+  celestia: "#ffd83d",
+  lonestar: "#ffffff"
+};
+
+export function accentFor(name: string): string {
+  return ACCENTS[name.toLowerCase()] || "#ffffff";
+}
+
 export const SITE_NAME = "Lonestar";
 export const TAGLINE = "An underground digital collective.";
 export const CREATOR = "Made by Ego";

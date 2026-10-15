@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CodeTexture from "@/components/CodeTexture";
 import Ticker from "@/components/Ticker";
+import { accentFor } from "@/lib/site";
 import { prisma } from "@/lib/db";
 import { SEED_AFFILIATIONS } from "@/lib/site";
 
@@ -43,7 +44,13 @@ export default async function AffiliationsPage() {
               <div key={a.id} className="flex flex-col md:flex-row gap-5 md:gap-8 py-8 md:py-10 border-b border-line group">
                 <span className="mono text-[11px] text-mist md:w-10 shrink-0 pt-2">{String(i + 1).padStart(2, "0")}</span>
                 {a.logoUrl ? (
-                  <img src={a.logoUrl} alt={a.name} loading="lazy" className="w-20 h-20 md:w-28 md:h-28 rounded-2xl object-cover border border-line grayscale shrink-0" />
+                  <img
+                    src={a.logoUrl}
+                    alt={a.name}
+                    loading="lazy"
+                    style={{ "--acc": accentFor(a.name) } as React.CSSProperties}
+                    className="w-20 h-20 md:w-28 md:h-28 rounded-2xl object-cover border border-line grayscale hover:grayscale-0 transition-all duration-500 shrink-0 hover:shadow-[0_0_36px_6px_var(--acc)]"
+                  />
                 ) : (
                   <span className="w-20 h-20 md:w-28 md:h-28 rounded-2xl grid place-items-center border border-line font-display text-3xl md:text-4xl bg-[#0b0b0b] shrink-0">
                     {a.name.slice(0, 1)}
