@@ -63,6 +63,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const [clock, setClock] = useState("");
   const [today, setToday] = useState("");
   const [entered, setEntered] = useState(false);
+  const [burst, setBurst] = useState(0);
 
   function spinOnce(e: React.MouseEvent<HTMLElement>) {
     const el = e.currentTarget;
@@ -191,7 +192,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </div>
 
           <section className="text-center px-2 order-1 lg:order-2">
-            <div className="relative inline-block">
+            <div className="relative inline-block" onMouseEnter={() => setBurst((b) => b + 1)}>
               {glow(profile.glowColor, 0.55) ? (
                 <div className="absolute -inset-3 rounded-full glow-spin" aria-hidden="true" style={{ background: "conic-gradient(from 0deg, transparent 0%, " + glow(profile.glowColor, 0.85) + " 12%, transparent 26%, transparent 55%, " + glow(profile.glowColor, 0.6) + " 68%, transparent 82%)", filter: "blur(10px)" }} />
               ) : null}
@@ -214,6 +215,14 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                 </div>
               )}
               <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border-4 border-black z-10" aria-label="online" />
+              {burst > 0 ? (
+                <span
+                  key={burst}
+                  className="burst-ring z-10"
+                  style={{ "--burst": glow(profile.glowColor, 1) || "#ffffff" } as React.CSSProperties}
+                  onAnimationEnd={() => setBurst(0)}
+                />
+              ) : null}
             </div>
             <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-6 break-words leading-none">{display}</h1>
             <div className="mono text-xs tracking-[0.25em] text-mist mt-3">@{profile.username}</div>

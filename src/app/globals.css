@@ -88,6 +88,21 @@ body {
   .float-b { --tilt: 2deg; }
 }
 
+@keyframes lonestar-burst {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.burst-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--burst, #ffffff);
+  box-shadow: 0 0 24px 4px var(--burst, #ffffff);
+  animation: lonestar-burst 0.7s ease-out;
+  pointer-events: none;
+}
+
 @keyframes lonestar-cardspin {
   from { transform: perspective(900px) rotateY(0deg); }
   to { transform: perspective(900px) rotateY(360deg); }
@@ -177,6 +192,7 @@ body {
   .shine-card::after { animation: none; display: none; }
   .float-a, .float-b { animation: none; }
   .spin-fast.spinning { animation: none; }
+  .burst-ring { animation: none; display: none; }
   .caret-blink { animation: none; }
   .marquee-track, .marquee-track-fast { animation: none; flex-wrap: wrap; width: auto; }
   .code-line { opacity: 1; animation: none; }
