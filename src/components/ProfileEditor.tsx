@@ -18,10 +18,6 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
   const [form, setForm] = useState({
     bio: initial.bio || "",
     backgroundUrl: initial.backgroundUrl || "",
-    musicUrl: initial.musicUrl || "",
-    trackTitle: initial.trackTitle || "",
-    trackArtist: initial.trackArtist || "",
-    trackCover: initial.trackCover || "",
     location: initial.location || "",
     timezone: initial.timezone || ""
   });
@@ -39,10 +35,6 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         body: JSON.stringify({
           bio: form.bio.slice(0, 500),
           backgroundUrl: form.backgroundUrl,
-          musicUrl: form.musicUrl,
-          trackTitle: form.trackTitle,
-          trackArtist: form.trackArtist,
-          trackCover: form.trackCover,
           location: form.location,
           timezone: form.timezone
         })
@@ -102,41 +94,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
           )}
         </div>
       ) : null}
-      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">MUSIC URL — SPOTIFY / YOUTUBE / MP3</label>
-      <input
-        value={form.musicUrl}
-        onChange={(e) => setForm({ ...form, musicUrl: e.target.value.slice(0, 2048) })}
-        className="w-full bg-black border border-line p-3 text-sm mono text-white focus:border-white"
-        placeholder="https://open.spotify.com/..."
-        inputMode="url"
-      />
-      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">TRACK DETAILS — FOR DIRECT MP3 FILES</label>
-      <div className="grid md:grid-cols-2 gap-3">
-        <input
-          value={form.trackTitle}
-          onChange={(e) => setForm({ ...form, trackTitle: e.target.value.slice(0, 160) })}
-          className="bg-black border border-line p-3 text-sm mono text-white focus:border-white"
-          placeholder="Song title"
-        />
-        <input
-          value={form.trackArtist}
-          onChange={(e) => setForm({ ...form, trackArtist: e.target.value.slice(0, 160) })}
-          className="bg-black border border-line p-3 text-sm mono text-white focus:border-white"
-          placeholder="Artist"
-        />
-      </div>
-      <div className="flex gap-3 mt-3 items-start">
-        <input
-          value={form.trackCover}
-          onChange={(e) => setForm({ ...form, trackCover: e.target.value.slice(0, 2048) })}
-          className="flex-1 bg-black border border-line p-3 text-sm mono text-white focus:border-white"
-          placeholder="Cover image URL — PNG JPG GIF"
-          inputMode="url"
-        />
-        {form.trackCover ? (
-          <img src={form.trackCover} alt="Cover preview" className="w-12 h-12 rounded-xl object-cover border border-line shrink-0" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
-        ) : null}
-      </div>
+      <div className="rounded-2xl border border-line p-4 mt-5 mono text-[11px] tracking-widest text-mist">MUSIC IS MANAGED BY THE ADMIN — ASK EGO TO SET YOUR TRACK</div>
       <div className="grid md:grid-cols-2 gap-4 mt-5">
         <div>
           <label className="block mono text-[11px] tracking-widest text-mist mb-2">LOCATION — OPTIONAL</label>
@@ -170,10 +128,6 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
             setForm({
               bio: initial.bio || "",
               backgroundUrl: initial.backgroundUrl || "",
-              musicUrl: initial.musicUrl || "",
-              trackTitle: initial.trackTitle || "",
-              trackArtist: initial.trackArtist || "",
-              trackCover: initial.trackCover || "",
               location: initial.location || "",
               timezone: initial.timezone || ""
             })
@@ -182,12 +136,12 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         >
           CANCEL
         </button>
-        {form.backgroundUrl || form.musicUrl ? (
+        {form.backgroundUrl ? (
           <button
-            onClick={() => setForm({ ...form, backgroundUrl: "", musicUrl: "" })}
+            onClick={() => setForm({ ...form, backgroundUrl: "" })}
             className="mono text-[11px] tracking-widest text-mist hover:text-white ml-auto"
           >
-            RESET MEDIA
+            RESET BACKGROUND
           </button>
         ) : null}
       </div>

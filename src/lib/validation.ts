@@ -29,10 +29,6 @@ const musicUrl = z
 export const profileUpdateSchema = z.object({
   bio: z.string().max(500).optional(),
   backgroundUrl: imageUrl.optional(),
-  musicUrl: musicUrl.optional(),
-  trackTitle: z.string().max(160).optional(),
-  trackArtist: z.string().max(160).optional(),
-  trackCover: imageUrl.optional(),
   location: z.string().max(120).optional(),
   timezone: z.string().max(80).optional()
 });
@@ -43,7 +39,11 @@ export const adminProfileSchema = z.object({
   bio: z.string().max(500).optional(),
   approved: z.boolean().optional(),
   visible: z.boolean().optional(),
-  affiliationId: z.string().nullable().optional()
+  affiliationId: z.string().nullable().optional(),
+  musicUrl: musicUrl.optional(),
+  trackTitle: z.string().max(160).optional(),
+  trackArtist: z.string().max(160).optional(),
+  trackCover: imageUrl.optional()
 });
 
 export const affiliationSchema = z.object({

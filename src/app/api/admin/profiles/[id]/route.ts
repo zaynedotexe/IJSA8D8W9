@@ -30,7 +30,11 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
         bio: parsed.data.bio,
         approved: parsed.data.approved,
         visible: parsed.data.visible,
-        affiliationId: parsed.data.affiliationId === undefined ? undefined : parsed.data.affiliationId
+        affiliationId: parsed.data.affiliationId === undefined ? undefined : parsed.data.affiliationId,
+        musicUrl: parsed.data.musicUrl !== undefined ? (parsed.data.musicUrl === "" ? null : parsed.data.musicUrl) : undefined,
+        trackTitle: parsed.data.trackTitle !== undefined ? (parsed.data.trackTitle === "" ? null : parsed.data.trackTitle.slice(0, 160)) : undefined,
+        trackArtist: parsed.data.trackArtist !== undefined ? (parsed.data.trackArtist === "" ? null : parsed.data.trackArtist.slice(0, 160)) : undefined,
+        trackCover: parsed.data.trackCover !== undefined ? (parsed.data.trackCover === "" ? null : parsed.data.trackCover) : undefined
       }
     });
     return NextResponse.json({ profile: updated });

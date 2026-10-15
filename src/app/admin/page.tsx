@@ -16,6 +16,9 @@ export default function AdminPage() {
   const [profiles, setProfiles] = useState<never[]>([]);
   const [form, setForm] = useState({ discordId: "", identity: "MEMBER", bio: "" });
   const [msg, setMsg] = useState("");
+  const [musicOpen, setMusicOpen] = useState<string | null>(null);
+  const [musicDraft, setMusicDraft] = useState({ musicUrl: "", trackTitle: "", trackArtist: "", trackCover: "" });
+  const [musicMsg, setMusicMsg] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/stats", { cache: "no-store" })
@@ -118,14 +121,89 @@ export default function AdminPage() {
       <div className="mt-8">
         <div className="mono text-[11px] tracking-[0.3em] text-mist mb-3">PROFILES — {(profiles as unknown[]).length}</div>
         <div className="border border-line divide-y divide-[#1a1a1a]">
-          {(profiles as { id: string; discordId: string; identity: string; approved: boolean; visible: boolean; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
-            <div key={p.id} className="p-4 flex flex-wrap items-center gap-3 bg-black">
-              <span className="mono text-xs text-white">{p.discordIdentity?.username || p.discordId}</span>
-              <span className="mono text-[10px] tracking-widest text-mist">{p.identity} · {p.approved ? "APPROVED" : "HIDDEN"}</span>
-              <button onClick={() => toggle(p)} className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white ml-auto">
-                {p.approved ? "DISABLE" : "APPROVE"}
-              </button>
-              <a href={"/member/" + p.id} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white">OPEN ↗</a>
+          {(profiles as { id: string; discordId: string; identity: string; approved: boolean; visible: boolean; musicUrl: string | null; trackTitle: string | null; trackArtist: string | null; trackCover: string | null; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
+            <div key={p.id} className="p-4 bg-black">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="mono text-xs text-white">{p.discordIdentity?.username || p.discordId}</span>
+                <span className="mono text-[10px] tracking-widest text-mist">{p.identity} · {p.approved ? "APPROVED" : "HIDDEN"}{p.musicUrl ? " · ♪" : ""}</span>
+                <button
+                  onClick={() => {
+                    if (musicOpen === p.id) {
+                      setMusicOpen(null);
+                    } else {
+                      setMusicOpen(p.id);
+                      setMusicDraft({
+                        musicUrl: p.musicUrl || "",
+                        trackTitle: p.trackTitle || "",
+                        trackArtist: p.trackArtist || "",
+                        trackCover: p.trackCover || ""
+                      });
+                      setMusicMsg("");
+                    }
+                  }}
+                  className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white ml-auto"
+                >
+                  MUSIC
+                </button>
+                <button onClick={() => toggle(p)} className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white">
+                  {p.approved ? "DISABLE" : "APPROVE"}
+                </button>
+                <a href={"/member/" + p.id} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white">OPEN ↗</a>
+              </div>
+              {musicOpen === p.id ? (
+                <div className="grid md:grid-cols-2 gap-2.5 mt-4">
+                  <input
+                    value={musicDraft.musicUrl}
+                    onChange={(e) => setMusicDraft({ ...musicDraft, musicUrl: e.target.value.slice(0, 2048) })}
+                    placeholder="MUSIC URL — SPOTIFY / YOUTUBE / MP3"
+                    className="md:col-span-2 bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                    inputMode="url"
+                  />
+                  <input
+                    value={musicDraft.trackTitle}
+                    onChange={(e) => setMusicDraft({ ...musicDraft, trackTitle: e.target.value.slice(0, 160) })}
+                    placeholder="SONG TITLE (MP3)"
+                    className="bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                  />
+                  <input
+                    value={musicDraft.trackArtist}
+                    onChange={(e) => setMusicDraft({ ...musicDraft, trackArtist: e.target.value.slice(0, 160) })}
+                    placeholder="ARTIST (MP3)"
+                    className="bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                  />
+                  <input
+                    value={musicDraft.trackCover}
+                    onChange={(e) => setMusicDraft({ ...musicDraft, trackCover: e.target.value.slice(0, 2048) })}
+                    placeholder="COVER IMAGE URL (MP3)"
+                    className="md:col-span-2 bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                    inputMode="url"
+                  />
+                  <div className="md:col-span-2 flex items-center gap-3">
+                    <button
+                      onClick={async () => {
+                        setMusicMsg("");
+                        const res = await fetch("/api/admin/profiles/" + p.id, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(musicDraft)
+                        });
+                        const data = await res.json().catch(() => null);
+                        if (!res.ok) {
+                          setMusicMsg(data?.error || "Save failed");
+                          return;
+                        }
+                        setMusicMsg("SAVED");
+                        const refreshed = await fetch("/api/admin/profiles", { cache: "no-store" }).then((r) => r.json()).catch(() => null);
+                        if (refreshed) setProfiles(refreshed.profiles || []);
+                      }}
+                      className="mono text-[11px] tracking-[0.25em] bg-white text-black px-5 py-2.5"
+                    >
+                      SAVE MUSIC
+                    </button>
+                    {musicMsg ? <span className="mono text-[10px] tracking-widest text-fog">{musicMsg}</span> : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
