@@ -62,6 +62,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const [bgOk, setBgOk] = useState(true);
   const [clock, setClock] = useState("");
   const [today, setToday] = useState("");
+  const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     fetch("/api/profiles/" + params.id, { cache: "no-store" })
@@ -120,10 +121,25 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
   const display = profile.nickname || profile.globalName || profile.username || "UNKNOWN";
   const showBg = profile.backgroundUrl && bgOk;
+  const needsGate = Boolean(profile.musicUrl && /\.(mp3|ogg|wav|m4a)(\?.*)?$/i.test(profile.musicUrl));
+
+  function enter() {
+    setEntered(true);
+    window.dispatchEvent(new Event("lonestar:enter"));
+  }
 
   return (
     <div className="relative isolate overflow-hidden">
       <ProfileViewTracker id={profile.id} />
+      {needsGate && !entered ? (
+        <button onClick={enter} className="fixed inset-0 z-50 bg-black/95 grid place-items-center cursor-pointer" aria-label={"Enter " + display + "'s profile"}>
+          <span className="text-center px-8 animate-enter">
+            <img src="/lonestar-emblem.png" alt="" aria-hidden="true" className="w-20 h-20 rounded-full object-cover border border-line mx-auto" />
+            <span className="font-display text-2xl md:text-3xl tracking-wide block mt-6">{display}</span>
+            <span className="mono text-[11px] tracking-[0.4em] text-fog block mt-3">CLICK TO ENTER<span className="caret-blink">_</span></span>
+          </span>
+        </button>
+      ) : null}
       {showBg ? (
         <div className="fixed inset-0 z-0">
           <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />

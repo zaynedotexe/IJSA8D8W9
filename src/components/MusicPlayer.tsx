@@ -72,6 +72,18 @@ export default function MusicPlayer({ url, title, artist, cover }: { url: string
   }, [url, kind]);
 
   useEffect(() => {
+    const onEnter = () => {
+      const el = audioRef.current;
+      if (!el) return;
+      el.play()
+        .then(() => setPlaying(true))
+        .catch(() => {});
+    };
+    window.addEventListener("lonestar:enter", onEnter);
+    return () => window.removeEventListener("lonestar:enter", onEnter);
+  }, []);
+
+  useEffect(() => {
     if (!isDirect) return;
     const el = audioRef.current;
     if (!el) return;
