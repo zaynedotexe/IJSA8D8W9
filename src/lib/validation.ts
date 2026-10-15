@@ -3,13 +3,13 @@ import { z } from "zod";
 const imageUrl = z
   .string()
   .max(2048)
-  .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v), { message: "Invalid URL" })
-  .refine((v) => v === "" || /\.(png|jpe?g|gif)(\?.*)?$/i.test(v), { message: "Only PNG JPG JPEG GIF allowed" });
+  .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v) || /^\/[^\s]*$/i.test(v), { message: "Invalid URL" })
+  .refine((v) => v === "" || /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(v), { message: "Only PNG JPG JPEG GIF allowed" });
 
 const musicUrl = z
   .string()
   .max(2048)
-  .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v), { message: "Invalid URL" })
+  .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v) || /^\/[^\s]*$/i.test(v), { message: "Invalid URL" })
   .refine(
     (v) => {
       if (v === "") return true;
