@@ -32,9 +32,8 @@ export default async function Home() {
         <div className="relative px-5 md:px-10 pt-16 md:pt-24 pb-12 max-w-6xl">
           <div className="animate-enter">
             <div className="mono text-[11px] tracking-[0.45em] text-fog">DISCORD.GG/LONESTAR — UNDERGROUND DIGITAL COLLECTIVE</div>
-            <h1 className="font-display leading-[0.9] mt-6 text-[19vw] md:text-[9.5rem] select-none">
-              LONE<span className="text-outline">STAR</span>
-            </h1>
+            <img src="/lonestar-wordmark.png" alt="LONESTAR" className="w-full max-w-3xl mt-6 select-none drift-slow" loading="eager" />
+            <h1 className="sr-only">LONESTAR</h1>
             <p className="text-fog max-w-xl mt-6 leading-relaxed text-sm md:text-base">
               A quiet collective of distinct identities. Minimal noise. Precise presence. Membership is earned, profiles are curated, and every signal matters.
             </p>

@@ -56,8 +56,8 @@ export default function RailNav() {
   return (
     <div>
       <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 z-40 flex-col items-center border-r border-line bg-black/95 backdrop-blur py-5 gap-2">
-        <Link href="/" className="w-11 h-11 grid place-items-center border border-white font-display text-xl mb-6 hover:bg-white hover:text-black transition-colors" aria-label="Lonestar home">
-          L
+        <Link href="/" className="mb-6 block" aria-label="Lonestar home">
+          <img src="/lonestar-emblem.png" alt="Lonestar" className="w-11 h-11 rounded-full object-cover border border-line hover:border-white transition-colors" />
         </Link>
         {items.map((it) => {
           const active = pathname === it.href || (it.href !== "/" && pathname.startsWith(it.href));
@@ -82,7 +82,7 @@ export default function RailNav() {
       <header className="md:hidden sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-line">
         <div className="px-5 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="w-7 h-7 grid place-items-center border border-white font-display text-sm">L</span>
+            <img src="/lonestar-emblem.png" alt="Lonestar" className="w-7 h-7 rounded-full object-cover border border-line" />
             <span className="mono text-xs tracking-[0.35em]">LONESTAR</span>
           </Link>
           <nav className="flex items-center gap-4 mono text-[10px] tracking-[0.2em] text-fog">
