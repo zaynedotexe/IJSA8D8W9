@@ -49,7 +49,7 @@ export async function exchangeCode(code: string): Promise<DiscordTokenResponse> 
 export type DiscordUser = {
   id: string;
   username: string;
-  globalName: string | null;
+  global_name: string | null;
   avatar: string | null;
   flags?: number;
   premium_type?: number | null;
