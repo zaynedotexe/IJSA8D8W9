@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CodeTexture from "@/components/CodeTexture";
 import RoleIcon from "@/components/RoleIcon";
 import { glow } from "@/lib/glow";
@@ -19,11 +19,40 @@ function ytThumb(url: string): string | null {
   }
 }
 
+function ytId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("?")[0] || null;
+    if (u.hostname.includes("youtube.com")) return u.searchParams.get("v");
+  } catch {}
+  return null;
+}
+
 function StackCard({ m, index, total }: { m: RowMember; index: number; total: number }) {
   const display = m.nickname || m.globalName || m.username;
   const artFirst = index % 2 === 1;
   const isVideo = Boolean(m.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(m.backgroundUrl));
-  const thumb = m.backgroundUrl && !isVideo ? ytThumb(m.backgroundUrl) : null;
+  const ytid = m.backgroundUrl && !isVideo ? ytId(m.backgroundUrl) : null;
+  const thumb = ytid ? "https://i.ytimg.com/vi/" + ytid + "/hqdefault.jpg" : null;
+  const [hovering, setHovering] = useState(false);
+  const vidRef = useRef<HTMLVideoElement | null>(null);
+
+  function onEnter() {
+    setHovering(true);
+    const v = vidRef.current;
+    if (v) v.play().catch(() => {});
+  }
+
+  function onLeave() {
+    setHovering(false);
+    const v = vidRef.current;
+    if (v) {
+      v.pause();
+      try {
+        v.currentTime = 0;
+      } catch {}
+    }
+  }
   return (
     <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
       <Link
@@ -60,6 +89,8 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
         <Link
         href={"/" + encodeURIComponent(m.username || m.id)}
           aria-label={"Open " + display + "'s profile"}
+          onMouseEnter={onEnter}
+          onMouseLeave={onLeave}
           className={
             "group relative block w-full h-64 md:h-[380px] rounded-[28px] border border-white/10 overflow-hidden transition-transform duration-500 ease-out " +
             "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +
@@ -69,7 +100,16 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
         >
           {m.backgroundUrl ? (
             isVideo ? (
-              <video src={m.backgroundUrl} autoPlay muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
+              <video ref={vidRef} src={m.backgroundUrl} muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
+            ) : ytid && hovering ? (
+              <iframe
+                src={"https://www.youtube-nocookie.com/embed/" + ytid + "?autoplay=1&mute=1&loop=1&playlist=" + ytid + "&controls=0&rel=0&playsinline=1"}
+                title=""
+                aria-hidden="true"
+                allow="autoplay; encrypted-media"
+                className="absolute pointer-events-none"
+                style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
+              />
             ) : (
               <img src={thumb || m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             )
