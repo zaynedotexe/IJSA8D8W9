@@ -89,9 +89,9 @@ export default async function Home() {
         <div className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
           <div className="mono text-[11px] tracking-[0.4em] text-mist">DOCTRINE</div>
           {[
-            { k: "01", t: "IDENTITY", d: "Each member carries a single deliberate identity, tied to Discord and curated by Ego." },
-            { k: "02", t: "HIERARCHY", d: "Roles define order. Visibility is intentional. Nothing leaks that should not." },
-            { k: "03", t: "SIGNAL", d: "Profiles speak through biography, background, and sound. No clutter, only presence." }
+            { k: "I", t: "NO SNITCHING", d: "Loyalty first. What happens within Lonestar stays within Lonestar." },
+            { k: "II", t: "REVENGE", d: "Never forget betrayal. Stay calm, act smart, and let consequences follow." },
+            { k: "III", t: "MODDER", d: "Power comes with responsibility. No abuse, no favoritism, no unnecessary power trips." }
           ].map((c) => (
             <div key={c.k} className="flex gap-6 md:gap-10 py-8 border-b border-line group">
               <span className="font-display text-4xl md:text-6xl text-outline-faint group-hover:text-outline transition-all shrink-0">{c.k}</span>
