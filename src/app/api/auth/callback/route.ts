@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { getSiteUrl } from "@/lib/env";
 import { getSession } from "@/lib/session";
 import { isAdminDiscordId } from "@/lib/authz";
 import { avatarUrl, exchangeCode, fetchDiscordUser, fetchUserGuilds } from "@/lib/discord";
 import { prisma } from "@/lib/db";
+
+function redirectWithClearedState(base: string, path: string) {
+  const res = NextResponse.redirect(base + path);
+  res.cookies.set("lonestar_oauth_state", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0
+  });
+  return res;
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -12,12 +23,12 @@ export async function GET(req: Request) {
   const state = url.searchParams.get("state");
   const error = url.searchParams.get("error");
   const base = getSiteUrl();
-  if (error) return NextResponse.redirect(base + "/login?error=cancelled");
-  const expected = cookies().get("lonestar_oauth_state")?.value;
-  if (!code || !state || !expected || state !== expected) {
-    return NextResponse.redirect(base + "/login?error=invalid_state");
+  if (error) return redirectWithClearedState(base, "/login?error=cancelled");
+  const expected = req.headers.get("cookie")?.match(/(?:^|;\s*)lonestar_oauth_state=([^;]+)/)?.[1];
+  const decoded = expected ? decodeURIComponent(expected) : undefined;
+  if (!code || !state || !decoded || state !== decoded) {
+    return redirectWithClearedState(base, "/login?error=invalid_state");
   }
-  cookies().set("lonestar_oauth_state", "", { path: "/", maxAge: 0 });
   try {
     const token = await exchangeCode(code);
     const user = await fetchDiscordUser(token.access_token);
@@ -55,9 +66,9 @@ export async function GET(req: Request) {
     session.isAdmin = isAdminDiscordId(user.id);
     session.expiresAt = Date.now() + 1000 * 60 * 60 * 24 * 7;
     await session.save();
-    if (!isMember) return NextResponse.redirect(base + "/login?error=not_member");
-    return NextResponse.redirect(base + "/me");
+    if (!isMember) return redirectWithClearedState(base, "/login?error=not_member");
+    return redirectWithClearedState(base, "/me");
   } catch {
-    return NextResponse.redirect(base + "/login?error=oauth_failed");
+    return redirectWithClearedState(base, "/login?error=oauth_failed");
   }
 }
