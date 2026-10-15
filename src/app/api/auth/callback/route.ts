@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSiteUrl } from "@/lib/env";
 import { getSession } from "@/lib/session";
 import { isAdminDiscordId } from "@/lib/authz";
-import { avatarUrl, exchangeCode, fetchDiscordUser, fetchUserGuilds } from "@/lib/discord";
+import { avatarUrl, exchangeCode, fetchDiscordUser, fetchGuildMember, fetchUserGuilds } from "@/lib/discord";
 import { prisma } from "@/lib/db";
 
 function redirectWithClearedState(base: string, path: string) {
@@ -36,25 +36,41 @@ export async function GET(req: Request) {
     const guildId = process.env.DISCORD_GUILD_ID || "";
     const isMember = guildId ? guilds.some((g) => g.id === guildId) : true;
     const avatar = avatarUrl(user.id, user.avatar);
+    let nickname: string | null | undefined = undefined;
+    let roleIds: string[] | undefined = undefined;
+    const botToken = process.env.DISCORD_BOT_TOKEN || "";
+    if (botToken && guildId) {
+      try {
+        const member = (await fetchGuildMember(botToken, guildId, user.id)) as {
+          nick?: string | null;
+          roles?: string[];
+        } | null;
+        if (member) {
+          nickname = member.nick || null;
+          roleIds = Array.isArray(member.roles) ? member.roles.filter((r) => r !== guildId) : [];
+        }
+      } catch {}
+    }
     if (prisma) {
       try {
+        const identityData = {
+          username: user.username,
+          globalName: user.global_name,
+          avatar,
+          isMember,
+          lastSyncAt: new Date(),
+          ...(nickname !== undefined ? { nickname } : {}),
+          ...(roleIds !== undefined ? { roleIds } : {})
+        };
         await prisma.discordIdentity.upsert({
           where: { discordId: user.id },
           create: {
             discordId: user.id,
-            username: user.username,
-            globalName: user.global_name,
-            avatar,
-            isMember,
-            lastSyncAt: new Date()
+            nickname: nickname ?? null,
+            roleIds: roleIds ?? [],
+            ...identityData
           },
-          update: {
-            username: user.username,
-            globalName: user.global_name,
-            avatar,
-            isMember,
-            lastSyncAt: new Date()
-          }
+          update: identityData
         });
       } catch {}
     }
