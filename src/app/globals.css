@@ -93,7 +93,7 @@ body {
   to { transform: perspective(900px) rotateY(360deg); }
 }
 
-.spin-fast:hover {
+.spin-fast.spinning {
   animation: lonestar-cardspin 0.8s ease;
 }
 
@@ -176,7 +176,7 @@ body {
   .glow-spin { animation: none; }
   .shine-card::after { animation: none; display: none; }
   .float-a, .float-b { animation: none; }
-  .spin-fast:hover { animation: none; }
+  .spin-fast.spinning { animation: none; }
   .caret-blink { animation: none; }
   .marquee-track, .marquee-track-fast { animation: none; flex-wrap: wrap; width: auto; }
   .code-line { opacity: 1; animation: none; }

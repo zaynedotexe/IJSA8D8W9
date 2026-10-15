@@ -64,6 +64,18 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const [today, setToday] = useState("");
   const [entered, setEntered] = useState(false);
 
+  function spinOnce(e: React.MouseEvent<HTMLElement>) {
+    const el = e.currentTarget;
+    if (el.classList.contains("spinning")) return;
+    el.classList.add("spinning");
+    const done = (ev: AnimationEvent) => {
+      if (ev.target !== el) return;
+      el.classList.remove("spinning");
+      el.removeEventListener("animationend", done as EventListener);
+    };
+    el.addEventListener("animationend", done as EventListener);
+  }
+
   useEffect(() => {
     fetch("/api/profiles/" + params.id, { cache: "no-store" })
       .then((r) => {
@@ -159,6 +171,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
         <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
           <aside
+            onMouseEnter={spinOnce}
             className="rounded-3xl glass shine-card float-a spin-fast p-6 text-center order-2 lg:order-1 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
@@ -223,6 +236,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </section>
 
           <aside
+            onMouseEnter={spinOnce}
             className="rounded-3xl glass shine-card float-b spin-fast p-5 order-3 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
