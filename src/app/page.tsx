@@ -1,90 +1,132 @@
 import Link from "next/link";
 import LoadingScreen from "@/components/LoadingScreen";
-import HomeViews from "@/components/HomeViews";
+import Ticker from "@/components/Ticker";
+import CodeTexture from "@/components/CodeTexture";
+import MemberRow, { type RowMember } from "@/components/MemberRow";
 
-async function getAffiliations() {
+async function getData() {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000");
   try {
-    const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000");
-    const res = await fetch(base + "/api/affiliations", { next: { revalidate: 60 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.affiliations || [];
+    const [affRes, memRes] = await Promise.all([
+      fetch(base + "/api/affiliations", { next: { revalidate: 60 } }),
+      fetch(base + "/api/members?limit=5", { next: { revalidate: 60 } })
+    ]);
+    const aff = affRes.ok ? ((await affRes.json()).affiliations || []) : [];
+    const mem = memRes.ok ? ((await memRes.json()).members || []) : [];
+    return { affiliations: aff, members: mem };
   } catch {
-    return [];
+    return { affiliations: [], members: [] };
   }
 }
 
 export default async function Home() {
-  const affiliations = await getAffiliations();
+  const { affiliations, members } = await getData();
   return (
     <div>
       <LoadingScreen />
-      <section className="max-w-6xl mx-auto px-5 pt-20 pb-16">
-        <div className="animate-enter">
-          <div className="mono text-[11px] tracking-[0.4em] text-mist">UNDERGROUND DIGITAL COLLECTIVE</div>
-          <h1 className="mono text-6xl md:text-8xl tracking-[0.12em] mt-6 leading-none">LONESTAR</h1>
-          <p className="text-fog max-w-xl mt-6 leading-relaxed">
-            A quiet collective of distinct identities. Minimal noise. Precise presence. Membership is earned, profiles are curated, and every signal matters.
-          </p>
-          <div className="flex flex-wrap gap-3 mt-8">
-            <Link href="/members" className="mono text-xs tracking-[0.25em] bg-white text-black px-7 py-3.5 hover:bg-fog transition-colors">
-              EXPLORE MEMBERS
-            </Link>
-            <Link href="/affiliations" className="mono text-xs tracking-[0.25em] border border-line text-fog px-7 py-3.5 hover:text-white hover:border-white transition-colors">
-              AFFILIATIONS
-            </Link>
-          </div>
-          <div className="mt-8 border-t border-line pt-5 flex flex-wrap gap-x-8 gap-y-2">
-            <HomeViews />
-            <span className="mono text-[11px] tracking-[0.25em] text-mist">STATUS — ONLINE</span>
-            <span className="mono text-[11px] tracking-[0.25em] text-mist">MODE — PRIVATE</span>
+      <section className="relative overflow-hidden">
+        <CodeTexture
+          lines={["$ whoami", "> lonestar", "const lonestar = { mode: 'underground' }", "0xLONESTAR", "$ nmap -sS collective", "[ok] identity verified"]}
+          className="opacity-80"
+        />
+        <div className="relative px-5 md:px-10 pt-16 md:pt-24 pb-12 max-w-6xl">
+          <div className="animate-enter">
+            <div className="mono text-[11px] tracking-[0.45em] text-fog">DISCORD.GG/LONESTAR — UNDERGROUND DIGITAL COLLECTIVE</div>
+            <h1 className="font-display leading-[0.9] mt-6 text-[19vw] md:text-[9.5rem] select-none">
+              LONE<span className="text-outline">STAR</span>
+            </h1>
+            <p className="text-fog max-w-xl mt-6 leading-relaxed text-sm md:text-base">
+              A quiet collective of distinct identities. Minimal noise. Precise presence. Membership is earned, profiles are curated, and every signal matters.
+            </p>
+            <div className="flex flex-wrap items-center gap-4 mt-8">
+              <Link href="/members" className="mono text-xs tracking-[0.25em] bg-white text-black rounded-full px-8 py-4 hover:bg-fog transition-colors">
+                ENTER THE INDEX →
+              </Link>
+              <Link href="/affiliations" className="mono text-xs tracking-[0.25em] border border-line text-fog rounded-full px-8 py-4 hover:text-white hover:border-white transition-colors">
+                AFFILIATES
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-x-10 gap-y-2 mt-10 mono text-[11px] tracking-[0.3em] text-mist">
+              <span>EST. IN THE DARK</span>
+              <span>MODE — PRIVATE</span>
+              <span>{members.length > 0 ? "INDEX — LIVE" : "INDEX — STANDBY"}</span>
+            </div>
           </div>
         </div>
       </section>
 
+      <Ticker items={["LONESTAR ON TOP", "IDENTITY IS EARNED", "MINIMAL NOISE", "MADE BY EGO", "STAY UNDERGROUND"]} />
+
+      <section className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <div className="mono text-[11px] tracking-[0.4em] text-mist">THE INDEX</div>
+            <h2 className="font-display text-3xl md:text-5xl mt-2">MEMBERS</h2>
+          </div>
+          <Link href="/members" className="mono text-[11px] tracking-widest text-fog hover:text-white shrink-0">VIEW ALL →</Link>
+        </div>
+        <div className="border-t border-line mt-6">
+          {members.length === 0 ? (
+            <div className="py-14 text-center mono text-xs tracking-[0.3em] text-mist">INDEX COMING ONLINE — CHECK BACK SOON</div>
+          ) : (
+            members.map((m: RowMember, i: number) => <MemberRow key={m.id} m={m} index={i} />)
+          )}
+        </div>
+      </section>
+
       <section className="border-t border-line">
-        <div className="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-3 gap-px bg-line border border-line">
+        <div className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
+          <div className="mono text-[11px] tracking-[0.4em] text-mist">DOCTRINE</div>
           {[
             { k: "01", t: "IDENTITY", d: "Each member carries a single deliberate identity, tied to Discord and curated by Ego." },
             { k: "02", t: "HIERARCHY", d: "Roles define order. Visibility is intentional. Nothing leaks that should not." },
             { k: "03", t: "SIGNAL", d: "Profiles speak through biography, background, and sound. No clutter, only presence." }
           ].map((c) => (
-            <div key={c.k} className="bg-black p-8">
-              <div className="mono text-[11px] tracking-[0.3em] text-mist">{c.k}</div>
-              <div className="mono text-sm tracking-[0.25em] mt-3">{c.t}</div>
-              <p className="text-fog text-sm mt-3 leading-relaxed">{c.d}</p>
+            <div key={c.k} className="flex gap-6 md:gap-10 py-8 border-b border-line group">
+              <span className="font-display text-4xl md:text-6xl text-outline-faint group-hover:text-outline transition-all shrink-0">{c.k}</span>
+              <div>
+                <div className="font-display text-xl md:text-2xl tracking-wide">{c.t}</div>
+                <p className="text-fog text-sm mt-2 max-w-lg leading-relaxed">{c.d}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-5 py-16">
-        <div className="flex items-end justify-between mb-8">
+      <section className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
+        <div className="flex items-end justify-between mb-6">
           <div>
-            <div className="mono text-[11px] tracking-[0.35em] text-mist">NETWORK</div>
-            <h2 className="mono text-3xl tracking-[0.15em] mt-2">AFFILIATIONS</h2>
+            <div className="mono text-[11px] tracking-[0.4em] text-mist">NETWORK</div>
+            <h2 className="font-display text-3xl md:text-5xl mt-2">AFFILIATES</h2>
           </div>
-          <Link href="/affiliations" className="mono text-[11px] tracking-widest text-fog hover:text-white">VIEW ALL →</Link>
+          <Link href="/affiliations" className="mono text-[11px] tracking-widest text-fog hover:text-white shrink-0">VIEW ALL →</Link>
         </div>
         {affiliations.length === 0 ? (
-          <div className="border border-line p-10 text-center mono text-xs tracking-widest text-mist">NO AFFILIATIONS PUBLISHED</div>
+          <div className="border-t border-line py-14 text-center mono text-xs tracking-[0.3em] text-mist">NO AFFILIATIONS PUBLISHED</div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-4">
-            {affiliations.slice(0, 6).map((a: { id: string; name: string; description: string; category?: string }) => (
-              <div key={a.id} className="border border-line bg-coal p-6 hover:border-fog transition-colors">
-                <div className="mono text-[10px] tracking-[0.3em] text-mist">{a.category || "LINKED"}</div>
-                <div className="mono text-base tracking-widest mt-2">{a.name}</div>
-                <p className="text-fog text-sm mt-2 line-clamp-3">{a.description}</p>
-              </div>
+          <div className="border-t border-line">
+            {affiliations.slice(0, 4).map((a: { id: string; name: string; description: string; category?: string }, i: number) => (
+              <Link key={a.id} href="/affiliations" className="group flex items-center gap-5 py-6 border-b border-line">
+                <span className="mono text-[11px] text-mist w-8">{String(i + 1).padStart(2, "0")}</span>
+                <span className="flex-1">
+                  <span className="font-display text-xl md:text-3xl tracking-wide block group-hover:translate-x-2 transition-transform">{a.name}</span>
+                  <span className="text-fog text-sm mt-1 block line-clamp-1">{a.description}</span>
+                </span>
+                <span className="mono text-[10px] tracking-[0.25em] text-mist hidden sm:block">{a.category || "LINKED"}</span>
+                <span className="mono group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
+              </Link>
             ))}
           </div>
         )}
       </section>
 
-      <section className="border-t border-line">
-        <div className="max-w-6xl mx-auto px-5 py-16 text-center">
-          <div className="mono text-xs tracking-[0.4em] text-mist">LONESTAR ON TOP</div>
-          <div className="mono text-[11px] tracking-widest text-mist mt-4">Made by Ego</div>
+      <section className="relative overflow-hidden border-t border-line">
+        <div className="px-5 md:px-10 py-16 md:py-24 text-center max-w-6xl mx-auto">
+          <div className="mono text-[11px] tracking-[0.45em] text-mist">PROVE YOU BELONG</div>
+          <Link href="/login" className="font-display block text-[13vw] md:text-8xl mt-4 leading-none hover:text-outline transition-all">
+            JOIN US
+          </Link>
+          <div className="mono text-[11px] tracking-[0.3em] text-mist mt-6">DISCORD OAUTH — MEMBERS ONLY — MADE BY EGO</div>
         </div>
       </section>
     </div>

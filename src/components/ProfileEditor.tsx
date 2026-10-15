@@ -60,7 +60,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
   }
 
   return (
-    <div className="border border-line bg-coal p-5">
+    <div className="rounded-3xl border border-line bg-[#0b0b0b] p-5 md:p-7">
       <div className="mono text-[11px] tracking-[0.3em] text-fog mb-5">EDIT PROFILE</div>
       <label className="block mono text-[11px] tracking-widest text-mist mb-2">BIOGRAPHY — {form.bio.length}/500</label>
       <textarea

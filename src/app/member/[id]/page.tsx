@@ -73,9 +73,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
   if (missing) {
     return (
-      <div className="max-w-3xl mx-auto px-5 py-24 text-center">
-        <div className="mono text-xs tracking-[0.35em] text-mist">404 — SIGNAL LOST</div>
-        <Link href="/members" className="mono text-xs tracking-widest text-white border border-line px-6 py-3 inline-block mt-8 hover:border-white">BACK TO MEMBERS</Link>
+      <div className="px-5 py-24 text-center max-w-3xl mx-auto">
+        <div className="font-display text-4xl text-outline-faint">SIGNAL LOST</div>
+        <div className="mono text-xs tracking-[0.3em] text-mist mt-3">404 — PROFILE NOT FOUND</div>
+        <Link href="/members" className="mono text-xs tracking-widest text-white border border-line rounded-full px-6 py-3 inline-block mt-8 hover:border-white">BACK TO MEMBERS</Link>
       </div>
     );
   }
@@ -84,7 +85,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
     return (
       <div>
         <LoadingScreen label="LOADING PROFILE" />
-        <div className="max-w-3xl mx-auto px-5 py-24 mono text-xs tracking-widest text-mist">ESTABLISHING CONNECTION...</div>
+        <div className="px-5 py-24 mono text-xs tracking-widest text-mist max-w-3xl mx-auto">ESTABLISHING CONNECTION...</div>
       </div>
     );
   }
@@ -93,73 +94,75 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const showBg = profile.backgroundUrl && bgOk;
 
   return (
-    <div className="relative min-h-[80vh]">
+    <div className="relative">
       <ProfileViewTracker id={profile.id} />
       {showBg ? (
         <div className="fixed inset-0 -z-10">
           <img src={profile.backgroundUrl!} alt="" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
-          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-black/75" />
         </div>
       ) : (
-        <div className="fixed inset-0 -z-10 bg-black" />
+        <div className="fixed inset-0 -z-10 bg-[#050505] bg-grid" />
       )}
-      <div className="max-w-3xl mx-auto px-5 py-12">
+      <div className="px-5 md:px-10 py-10 md:py-14 max-w-4xl mx-auto">
         <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
-        <div className="border border-line bg-black/85 backdrop-blur mt-6 p-7 md:p-10">
-          <div className="mono text-[10px] tracking-[0.35em] text-mist">LONESTAR — PROFILE</div>
-          <div className="flex flex-col md:flex-row gap-6 mt-6">
+        <div className="mt-6 rounded-3xl border border-line bg-black/85 backdrop-blur p-6 md:p-10 overflow-hidden">
+          <div className="mono text-[10px] tracking-[0.4em] text-mist">LONESTAR — PROFILE</div>
+          <div className="flex flex-col sm:flex-row gap-6 mt-6 items-start">
             {profile.avatar ? (
-              <img src={profile.avatar} alt={display} className="w-28 h-28 object-cover border border-line" />
+              <img src={profile.avatar} alt={display} className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border border-line" />
             ) : (
-              <div className="w-28 h-28 grid place-items-center border border-line mono text-4xl bg-coal">{display.slice(0, 1).toUpperCase()}</div>
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full grid place-items-center border border-line font-display text-4xl bg-[#0b0b0b]">{display.slice(0, 1).toUpperCase()}</div>
             )}
-            <div className="flex-1">
-              <h1 className="mono text-3xl tracking-widest">{display}</h1>
-              <div className="mono text-[11px] tracking-widest text-mist mt-1">@{profile.username} · {profile.identity}</div>
+            <div className="flex-1 min-w-0">
+              <h1 className="font-display text-3xl md:text-5xl tracking-wide break-words leading-none">{display}</h1>
+              <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">@{profile.username} — {profile.identity}</div>
               <div className="flex flex-wrap gap-1.5 mt-4">
                 {roles.map((r) => (
-                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line text-fog px-2 py-1">{r.name}</span>
+                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line text-fog rounded-full px-3 py-1">{r.name}</span>
                 ))}
               </div>
             </div>
           </div>
 
           <div className="border-t border-line mt-8 pt-6">
-            <div className="mono text-[10px] tracking-[0.3em] text-mist">TRANSMISSION</div>
+            <div className="mono text-[10px] tracking-[0.35em] text-mist">TRANSMISSION</div>
             <div className="mono text-sm leading-relaxed mt-3 min-h-[3.5rem] whitespace-pre-wrap break-words">
               <TypewriterBio bio={profile.bio} />
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-line border border-line mt-8">
-            <div className="bg-black p-4">
+          <div className="grid grid-cols-3 gap-2 md:gap-3 mt-8">
+            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
               <div className="mono text-[10px] tracking-[0.3em] text-mist">VIEWS</div>
-              <div className="mono text-lg mt-1">{count === null ? "—" : count.toLocaleString()}</div>
+              <div className="font-display text-xl md:text-2xl mt-1">{count === null ? "—" : count.toLocaleString()}</div>
             </div>
-            <div className="bg-black p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">LOCATION</div>
-              <div className="mono text-sm mt-1">{profile.location || "UNDISCLOSED"}</div>
+            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
+              <div className="mono text-[10px] tracking-[0.3em] text-mist">BASE</div>
+              <div className="mono text-xs md:text-sm mt-1.5 truncate">{profile.location || "UNDISCLOSED"}</div>
             </div>
-            <div className="bg-black p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">LOCAL TIME</div>
-              <div className="mono text-sm mt-1">{profile.timezone ? (clock || "—") + " · " + profile.timezone : "—"}</div>
+            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
+              <div className="mono text-[10px] tracking-[0.3em] text-mist">LOCAL</div>
+              <div className="mono text-xs md:text-sm mt-1.5 truncate">{profile.timezone ? (clock || "—") : "—"}</div>
             </div>
           </div>
 
           {profile.affiliation ? (
-            <div className="border border-line mt-6 p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">AFFILIATION</div>
-              <div className="mono text-sm tracking-widest mt-1">{profile.affiliation.name}</div>
-              <div className="text-fog text-sm mt-1">{profile.affiliation.description}</div>
+            <div className="rounded-2xl border border-line mt-3 p-4 flex gap-4 items-center">
+              <span className="w-11 h-11 rounded-xl grid place-items-center border border-line font-display text-lg bg-[#0b0b0b] shrink-0">{profile.affiliation.name.slice(0, 1)}</span>
+              <div>
+                <div className="mono text-[10px] tracking-[0.3em] text-mist">AFFILIATION</div>
+                <div className="font-display tracking-wide mt-0.5">{profile.affiliation.name}</div>
+              </div>
             </div>
           ) : null}
 
-          <div className="mt-6">
-            <div className="mono text-[10px] tracking-[0.3em] text-mist mb-3">SOUND</div>
+          <div className="mt-8">
+            <div className="mono text-[10px] tracking-[0.35em] text-mist mb-3">SOUND</div>
             <MusicPlayer url={profile.musicUrl} />
           </div>
 
-          <div className="mono text-[10px] tracking-[0.3em] text-mist mt-8 text-center">LONESTAR ON TOP · MADE BY EGO</div>
+          <div className="mono text-[10px] tracking-[0.35em] text-mist mt-8 text-center">LONESTAR ON TOP — MADE BY EGO</div>
         </div>
       </div>
     </div>

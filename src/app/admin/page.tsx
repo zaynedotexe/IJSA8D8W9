@@ -73,7 +73,7 @@ export default function AdminPage() {
   return (
     <div className="max-w-6xl mx-auto px-5 py-12">
       <div className="mono text-[11px] tracking-[0.4em] text-mist">RESTRICTED</div>
-      <h1 className="mono text-4xl tracking-[0.15em] mt-3">ADMIN</h1>
+      <h1 className="font-display text-5xl mt-3">ADMIN</h1>
 
       <div className="grid md:grid-cols-4 gap-px bg-line border border-line mt-8">
         {[
@@ -89,7 +89,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="border border-line bg-coal p-6 mt-8">
+      <div className="rounded-3xl border border-line bg-[#0b0b0b] p-6 mt-8">
         <div className="mono text-[11px] tracking-[0.3em] text-fog">CREATE PROFILE — LINK DISCORD ID</div>
         <div className="grid md:grid-cols-3 gap-3 mt-4">
           <input
