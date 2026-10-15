@@ -4,6 +4,8 @@ import Ticker from "@/components/Ticker";
 import CodeTexture from "@/components/CodeTexture";
 import MemberRow, { type RowMember } from "@/components/MemberRow";
 
+export const revalidate = 60;
+
 async function getData() {
   const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000");
   try {
