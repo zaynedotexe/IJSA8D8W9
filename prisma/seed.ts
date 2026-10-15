@@ -40,7 +40,8 @@ async function main() {
   }
   const affs = [
     { name: "Lannister", description: "Allied collective standing with Lonestar.", category: "AFFILIATE", order: 0, visible: true, logoUrl: "/aff-lannister.png" },
-    { name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true, logoUrl: "/aff-celestia.png" }
+    { name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true, logoUrl: "/aff-celestia.png" },
+    { name: "Lonestar", description: "The home collective.", category: "AFFILIATE", order: 2, visible: true, logoUrl: "/aff-lonestar.png" }
   ];
   for (const a of affs) {
     const existing = await prisma.affiliation.findFirst({ where: { name: a.name } });
