@@ -65,10 +65,22 @@ function publicShape(p: never): Record<string, unknown> {
 export async function GET(_req: Request, ctx: { params: { id: string } }) {
   if (!prisma) return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
   try {
-    const profile = await prisma.profile.findFirst({
-      where: { id: ctx.params.id, visible: true, approved: true },
+    const slug = decodeURIComponent(ctx.params.id);
+    let profile = await prisma.profile.findFirst({
+      where: { id: slug, visible: true, approved: true },
       include: { discordIdentity: true, affiliation: true }
     });
+    if (!profile) {
+      const identity = await prisma.discordIdentity.findFirst({
+        where: { username: { equals: slug, mode: "insensitive" } }
+      });
+      if (identity) {
+        profile = await prisma.profile.findFirst({
+          where: { discordId: identity.discordId, visible: true, approved: true },
+          include: { discordIdentity: true, affiliation: true }
+        });
+      }
+    }
     if (!profile) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const [roles, allAffiliations] = await Promise.all([
       prisma.roleConfig.findMany({

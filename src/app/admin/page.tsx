@@ -148,7 +148,7 @@ export default function AdminPage() {
                 <button onClick={() => toggle(p)} className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white">
                   {p.approved ? "DISABLE" : "APPROVE"}
                 </button>
-                <a href={"/member/" + p.id} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white">OPEN ↗</a>
+                <a href={"/member/" + encodeURIComponent(p.discordIdentity?.username || p.id)} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white">OPEN ↗</a>
               </div>
               {musicOpen === p.id ? (
                 <div className="grid md:grid-cols-2 gap-2.5 mt-4">

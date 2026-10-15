@@ -13,7 +13,7 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
   return (
     <div className={"md:[perspective:1400px] " + (left ? "" : "md:flex md:justify-end")}>
       <Link
-        href={"/member/" + m.id}
+        href={"/member/" + encodeURIComponent(m.username || m.id)}
         className={
           "group relative block w-full md:w-[68%] rounded-[28px] border border-white/10 bg-[#0a0a0a] overflow-hidden transition-transform duration-500 ease-out " +
           "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +

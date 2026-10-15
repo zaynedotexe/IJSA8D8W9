@@ -109,7 +109,7 @@ export default function MePage() {
           <h1 className="font-display text-3xl md:text-4xl tracking-wide mt-2">{display}</h1>
         </div>
         <div className="flex gap-2">
-          <Link href={"/member/" + profile.id} className="mono text-[11px] tracking-widest border border-line rounded-full px-4 py-2 text-fog hover:text-white">VIEW PUBLIC</Link>
+          <Link href={"/member/" + encodeURIComponent(profile.username || profile.id)} className="mono text-[11px] tracking-widest border border-line rounded-full px-4 py-2 text-fog hover:text-white">VIEW PUBLIC</Link>
           <button onClick={logout} className="mono text-[11px] tracking-widest border border-line rounded-full px-4 py-2 text-fog hover:text-white">LOGOUT</button>
         </div>
       </div>

@@ -21,7 +21,7 @@ export default function MemberRow({ m, index }: { m: RowMember; index: number })
   const display = m.nickname || m.globalName || m.username;
   return (
     <Link
-      href={"/member/" + m.id}
+      href={"/member/" + encodeURIComponent(m.username || m.id)}
       className="group flex items-center gap-4 md:gap-6 py-4 md:py-5 border-b border-line px-2 md:px-4 transition-colors hover:bg-white hover:text-black"
     >
       <span className="mono text-[11px] text-mist group-hover:text-black/60 w-8 shrink-0">
