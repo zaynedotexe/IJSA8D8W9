@@ -4,8 +4,8 @@ export const CREATOR = "Made by Ego";
 export const LOOP_PHRASE = "Lonestar On Top";
 
 export const SEED_AFFILIATIONS = [
-  { id: "seed-aff-1", name: "LONESTAR WORLD", description: "Primary collective identity.", category: "COLLECTIVE", order: 0, visible: true, logoUrl: null, externalUrl: "https://www.lonestarwxrld.com/" },
-  { id: "seed-aff-2", name: "UNDERGROUND", description: "Affiliated community space.", category: "COMMUNITY", order: 1, visible: true, logoUrl: null, externalUrl: null }
+  { id: "seed-aff-1", name: "Lannister", description: "Allied collective standing with Lonestar.", category: "AFFILIATE", order: 0, visible: true, logoUrl: null, externalUrl: null },
+  { id: "seed-aff-2", name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true, logoUrl: null, externalUrl: null }
 ];
 
 export type SeedProfile = {

@@ -12,8 +12,8 @@ async function main() {
     await prisma.roleConfig.upsert({ where: { roleId: r.roleId }, create: r, update: { name: r.name, priority: r.priority } });
   }
   const affs = [
-    { name: "LONESTAR WORLD", description: "Primary collective identity.", category: "COLLECTIVE", order: 0, visible: true, externalUrl: "https://www.lonestarwxrld.com/" },
-    { name: "UNDERGROUND", description: "Affiliated community space.", category: "COMMUNITY", order: 1, visible: true }
+    { name: "Lannister", description: "Allied collective standing with Lonestar.", category: "AFFILIATE", order: 0, visible: true },
+    { name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true }
   ];
   for (const a of affs) {
     const existing = await prisma.affiliation.findFirst({ where: { name: a.name } });
