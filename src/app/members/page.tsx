@@ -62,7 +62,6 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
           <span className="absolute top-4 right-5 mono text-[10px] tracking-[0.3em] text-white/70">
             MEMBER / {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="absolute bottom-4 right-5 mono text-xl text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" aria-hidden="true">→</span>
         </Link>
       </div>
     </div>
