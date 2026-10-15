@@ -71,6 +71,32 @@ export default function MusicPlayer({ url, title, artist, cover }: { url: string
     };
   }, [url, kind]);
 
+  useEffect(() => {
+    if (!isDirect) return;
+    const el = audioRef.current;
+    if (!el) return;
+    el.volume = volume;
+    let done = false;
+    const attempt = () => {
+      el.play()
+        .then(() => {
+          setPlaying(true);
+          done = true;
+          window.removeEventListener("pointerdown", attempt);
+          window.removeEventListener("keydown", attempt);
+        })
+        .catch(() => {});
+    };
+    attempt();
+    window.addEventListener("pointerdown", attempt);
+    window.addEventListener("keydown", attempt);
+    return () => {
+      window.removeEventListener("pointerdown", attempt);
+      window.removeEventListener("keydown", attempt);
+      if (!done) return;
+    };
+  }, [isDirect, url]);
+
   if (!url) {
     return <div className="mono text-[11px] tracking-widest text-mist">NO TRANSMISSION LOADED</div>;
   }
@@ -173,7 +199,7 @@ export default function MusicPlayer({ url, title, artist, cover }: { url: string
           <audio
             ref={audioRef}
             src={url}
-            preload="metadata"
+            preload="auto"
             onTimeUpdate={(e) => setPos((e.target as HTMLAudioElement).currentTime)}
             onLoadedMetadata={(e) => {
               const el = e.target as HTMLAudioElement;
