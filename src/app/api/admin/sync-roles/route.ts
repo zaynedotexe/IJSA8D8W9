@@ -3,6 +3,15 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { isAdminSession } from "@/lib/authz";
 
+function tierOf(name: string): { priority: number; visible: boolean; label: string } {
+  const lower = name.toLowerCase();
+  if (lower === "founder") return { priority: 0, visible: true, label: "Founder" };
+  if (lower.includes("godly")) return { priority: 10, visible: true, label: "Godly Sins" };
+  if (lower === "sins" || lower === "ѕιηѕ") return { priority: 50, visible: true, label: "Sins" };
+  if (lower === "shits" || lower === "ѕнιтѕ") return { priority: 100, visible: true, label: "Shits" };
+  return { priority: 100, visible: false, label: name.slice(0, 120) };
+}
+
 export async function GET() {
   const session = await getSession();
   if (!session.discordId || !isAdminSession(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -15,39 +24,36 @@ export async function GET() {
     });
     if (!res.ok) return NextResponse.json({ error: "Discord rejected the bot token", status: res.status }, { status: 502 });
     const roles = (await res.json()) as { id: string; name: string; icon: string | null; unicode_emoji: string | null }[];
-    let guildName: string | null = null;
-    try {
-      const g = await fetch("https://discord.com/api/v10/guilds/" + guildId + "?with_counts=true", {
-        headers: { Authorization: "Bot " + botToken }
-      });
-      if (g.ok) {
-        const gj = (await g.json()) as { name?: string };
-        guildName = gj.name || null;
-      }
-    } catch {}
-    let updated = 0;
+    const live = roles.filter((r) => r.id !== guildId);
     const artwork: string[] = [];
-    for (const r of roles) {
-      if (r.id === guildId) continue;
+    for (const r of live) {
+      const tier = tierOf(r.name);
       try {
-        const hit = await prisma.roleConfig.updateMany({
+        await prisma.roleConfig.upsert({
           where: { roleId: r.id },
-          data: { name: r.name.slice(0, 120), icon: r.icon, unicodeEmoji: r.unicode_emoji }
+          create: {
+            roleId: r.id,
+            name: tier.label,
+            priority: tier.priority,
+            visible: tier.visible,
+            icon: r.icon,
+            unicodeEmoji: r.unicode_emoji
+          },
+          update: {
+            name: tier.label,
+            priority: tier.priority,
+            visible: tier.visible,
+            icon: r.icon,
+            unicodeEmoji: r.unicode_emoji
+          }
         });
-        if (hit.count > 0) {
-          updated += 1;
-          if (r.icon || r.unicode_emoji) artwork.push(r.name);
-        }
+        if (r.icon || r.unicode_emoji) artwork.push(r.name);
       } catch {}
     }
-    return NextResponse.json({
-      updated,
-      artwork,
-      guildName,
-      guildId,
-      serverRoleCount: roles.length,
-      serverRoleSample: roles.slice(0, 8).map((r) => ({ id: r.id, name: r.name }))
+    const pruned = await prisma.roleConfig.deleteMany({
+      where: { roleId: { notIn: live.map((r) => r.id) } }
     });
+    return NextResponse.json({ upserted: live.length, pruned: pruned.count, artwork });
   } catch {
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });
   }
