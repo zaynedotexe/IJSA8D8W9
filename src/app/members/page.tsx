@@ -27,7 +27,7 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
   return (
     <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
       <Link
-        href={"/member/" + encodeURIComponent(m.username || m.id)}
+          href={"/" + encodeURIComponent(m.username || m.id)}
         className={"group flex items-center gap-4 md:col-span-4 " + (artFirst ? "md:order-2" : "md:order-1")}
       >
         {m.avatar ? (
@@ -58,7 +58,7 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
       </Link>
       <div className={"md:col-span-8 md:[perspective:1400px] " + (artFirst ? "md:order-1" : "md:order-2")}>
         <Link
-          href={"/member/" + encodeURIComponent(m.username || m.id)}
+        href={"/" + encodeURIComponent(m.username || m.id)}
           aria-label={"Open " + display + "'s profile"}
           className={
             "group relative block w-full h-64 md:h-[380px] rounded-[28px] border border-white/10 overflow-hidden transition-transform duration-500 ease-out " +
