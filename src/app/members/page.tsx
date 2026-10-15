@@ -11,17 +11,17 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
   const display = m.nickname || m.globalName || m.username;
   const left = index % 2 === 0;
   return (
-    <div className={"md:[perspective:1400px] " + (left ? "" : "md:flex md:justify-end")}>
+    <div className="md:[perspective:1400px]">
       <Link
         href={"/member/" + encodeURIComponent(m.username || m.id)}
         className={
-          "group relative block w-full md:w-[68%] rounded-[28px] border border-white/10 bg-[#0a0a0a] overflow-hidden transition-transform duration-500 ease-out " +
+          "group relative block w-full rounded-[28px] border border-white/10 bg-[#0a0a0a] overflow-hidden transition-transform duration-500 ease-out " +
           "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +
-          (left ? "md:[transform:rotateY(-9deg)_rotateX(2deg)]" : "md:[transform:rotateY(9deg)_rotateX(2deg)]")
+          (left ? "md:[transform:rotateY(-4deg)_rotateX(1deg)]" : "md:[transform:rotateY(4deg)_rotateX(1deg)]")
         }
         style={glow(m.glowColor, 0.35) ? { boxShadow: "0 30px 90px -20px " + glow(m.glowColor, 0.35) } : undefined}
       >
-        <div className="relative h-64 md:h-80 overflow-hidden">
+        <div className="relative h-72 md:h-[420px] overflow-hidden">
           {m.backgroundUrl ? (
             <img src={m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
