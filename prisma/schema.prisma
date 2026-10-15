@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DiscordIdentity {
+  id           String   @id @default(cuid())
+  discordId    String   @unique
+  username     String
+  globalName   String?
+  avatar       String?
+  nickname     String?
+  roleIds      String[] @default([])
+  isMember     Boolean  @default(true)
+  joinedAt     DateTime?
+  lastSyncAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  profile      Profile? @relation(fields: [discordId], references: [discordId])
+  @@index([isMember])
+  @@index([updatedAt])
+}
+
+model Profile {
+  id          String           @id @default(cuid())
+  discordId   String           @unique
+  identity    String           @default("MEMBER")
+  bio         String           @default("") @db.Text
+  backgroundUrl String?        @db.VarChar(2048)
+  musicUrl    String?          @db.VarChar(2048)
+  location    String?          @db.VarChar(120)
+  timezone    String?          @db.VarChar(80)
+  visible     Boolean          @default(true)
+  approved    Boolean          @default(false)
+  views       Int              @default(0)
+  affiliationId String?
+  affiliation Affiliation?     @relation(fields: [affiliationId], references: [id], onDelete: SetNull)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  viewEvents  ViewEvent[]
+  discordIdentity DiscordIdentity? @relation
+  @@index([visible, approved])
+  @@index([affiliationId])
+  @@index([updatedAt])
+}
+
+model RoleConfig {
+  id        String   @id @default(cuid())
+  roleId    String   @unique
+  name      String
+  priority  Int      @default(100)
+  visible   Boolean  @default(true)
+  style     String?  @db.VarChar(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([priority])
+  @@index([visible])
+}
+
+model Affiliation {
+  id          String    @id @default(cuid())
+  name        String
+  description String    @default("") @db.Text
+  logoUrl     String?   @db.VarChar(2048)
+  externalUrl String?   @db.VarChar(2048)
+  category    String?   @db.VarChar(80)
+  order       Int       @default(0)
+  visible     Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  profiles    Profile[]
+  @@index([visible, order])
+}
+
+model ViewEvent {
+  id        String   @id @default(cuid())
+  pageType  String
+  profileId String?
+  profile   Profile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  dedupHash String
+  createdAt DateTime @default(now())
+  @@index([pageType, createdAt])
+  @@index([profileId, createdAt])
+  @@index([dedupHash, pageType, createdAt])
+}
+
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  count     Int      @default(1)
+  expiresAt DateTime
+  updatedAt DateTime @updatedAt
+  @@index([expiresAt])
+}
+
+model SyncState {
+  id        String   @id @default(cuid())
+  kind      String   @unique
+  lastRunAt DateTime @default(now())
+  status    String   @default("ok")
+  detail    String?  @db.Text
+  updatedAt DateTime @updatedAt
+}
