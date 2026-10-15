@@ -227,11 +227,11 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3 shrink-0">SERVERS</div>
-            {servers.length === 0 ? (
+            {servers.filter((s) => s.isMember || s.isOwner).length === 0 ? (
               <div className="rounded-2xl border border-line p-4 mono text-[10px] tracking-[0.25em] text-mist">NO LINKED SERVERS</div>
             ) : (
               <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto thin-scroll lg:-mx-1 lg:px-1">
-              {servers.map((s) => (
+              {servers.filter((s) => s.isMember || s.isOwner).map((s) => (
                 <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0">
                   {s.logoUrl ? (
                     <img src={s.logoUrl} alt={s.name} loading="lazy" className="w-full h-28 object-cover grayscale" />
