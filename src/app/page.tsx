@@ -2,7 +2,6 @@ import Link from "next/link";
 import LoadingScreen from "@/components/LoadingScreen";
 import Ticker from "@/components/Ticker";
 import CodeTexture from "@/components/CodeTexture";
-import MemberRow, { type RowMember } from "@/components/MemberRow";
 import { prisma } from "@/lib/db";
 import { SEED_AFFILIATIONS } from "@/lib/site";
 
@@ -85,23 +84,6 @@ export default async function Home() {
       </section>
 
       <Ticker items={["LONESTAR ON TOP", "IDENTITY IS EARNED", "MINIMAL NOISE", "MADE BY EGO", "STAY UNDERGROUND"]} />
-
-      <section className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
-        <div className="flex items-end justify-between mb-2">
-          <div>
-            <div className="mono text-[11px] tracking-[0.4em] text-mist">THE INDEX</div>
-            <h2 className="font-display text-3xl md:text-5xl mt-2">MEMBERS</h2>
-          </div>
-          <Link href="/members" className="mono text-[11px] tracking-widest text-fog hover:text-white shrink-0">VIEW ALL →</Link>
-        </div>
-        <div className="border-t border-line mt-6">
-          {members.length === 0 ? (
-            <div className="py-14 text-center mono text-xs tracking-[0.3em] text-mist">INDEX COMING ONLINE — CHECK BACK SOON</div>
-          ) : (
-            members.map((m: RowMember, i: number) => <MemberRow key={m.id} m={m} index={i} />)
-          )}
-        </div>
-      </section>
 
       <section className="border-t border-line">
         <div className="px-5 md:px-10 py-14 md:py-20 max-w-6xl">
