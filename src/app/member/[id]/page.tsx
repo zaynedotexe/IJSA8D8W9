@@ -164,13 +164,14 @@ export default function MemberPage({ params }: { params: { id: string } }) {
         </button>
       ) : null}
       {showBg ? (
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0 z-0 overflow-hidden">
           {bgYoutubeId ? (
             <iframe
               src={"https://www.youtube-nocookie.com/embed/" + bgYoutubeId + "?autoplay=1&mute=1&loop=1&playlist=" + bgYoutubeId + "&controls=0&rel=0&playsinline=1"}
               title="Background video"
               allow="autoplay; encrypted-media"
-              className="w-full h-full pointer-events-none scale-110"
+              className="absolute pointer-events-none"
+              style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
               loading="lazy"
             />
           ) : bgIsVideo ? (
