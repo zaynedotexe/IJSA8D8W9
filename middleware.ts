@@ -15,9 +15,8 @@ export function middleware(req: NextRequest) {
   const host = req.headers.get("host") || "";
   if (host === canonicalHost) return NextResponse.next();
   const path = req.nextUrl.pathname;
-  if (!AUTH_PATHS.some((p) => path === p || path.startsWith(p + "/") || path.startsWith("/api/auth"))) && path !== "/login") {
-    return NextResponse.next();
-  }
+  const isAuth = AUTH_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+  if (!isAuth) return NextResponse.next();
   const target = new URL(canonical);
   target.pathname = path;
   target.search = req.nextUrl.search;
