@@ -75,9 +75,9 @@ export default async function Home() {
               </Link>
             </div>
             <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 mt-10 mono text-[11px] tracking-[0.3em] text-mist">
-              <span>EST. IN THE DARK</span>
-              <span>MODE — PRIVATE</span>
-              <span>{members.length > 0 ? "INDEX — LIVE" : "INDEX — STANDBY"}</span>
+              <span>EST. 2026</span>
+              <span>MODE — REVENGE</span>
+              <span>PURPOSE — YOU</span>
             </div>
           </div>
         </div>
