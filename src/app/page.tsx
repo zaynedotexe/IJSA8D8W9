@@ -3,21 +3,48 @@ import LoadingScreen from "@/components/LoadingScreen";
 import Ticker from "@/components/Ticker";
 import CodeTexture from "@/components/CodeTexture";
 import MemberRow, { type RowMember } from "@/components/MemberRow";
+import { prisma } from "@/lib/db";
+import { SEED_AFFILIATIONS } from "@/lib/site";
 
 export const revalidate = 60;
 
 async function getData() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000");
+  if (!prisma) return { affiliations: SEED_AFFILIATIONS, members: [] };
   try {
-    const [affRes, memRes] = await Promise.all([
-      fetch(base + "/api/affiliations", { next: { revalidate: 60 } }),
-      fetch(base + "/api/members?limit=5", { next: { revalidate: 60 } })
+    const [affiliations, roles, profiles] = await Promise.all([
+      prisma.affiliation.findMany({ where: { visible: true }, orderBy: { order: "asc" } }),
+      prisma.roleConfig.findMany({ where: { visible: true } }),
+      prisma.profile.findMany({
+        where: { visible: true, approved: true },
+        include: { discordIdentity: true, affiliation: true },
+        take: 50
+      })
     ]);
-    const aff = affRes.ok ? ((await affRes.json()).affiliations || []) : [];
-    const mem = memRes.ok ? ((await memRes.json()).members || []) : [];
-    return { affiliations: aff, members: mem };
+    const priorityOf = new Map(roles.map((r) => [r.roleId, r.priority]));
+    const roleById = new Map(roles.map((r) => [r.roleId, r]));
+    const members = profiles
+      .filter((p) => p.discordIdentity && p.discordIdentity.isMember)
+      .map((p) => {
+        const id = p.discordIdentity!;
+        const rids = (id.roleIds || []).filter((rid) => roleById.has(rid));
+        const pri = rids.length ? Math.min(...rids.map((rid) => priorityOf.get(rid) ?? 9999)) : 9999;
+        return {
+          id: p.id,
+          identity: p.identity,
+          username: id.username,
+          globalName: id.globalName,
+          avatar: id.avatar,
+          nickname: id.nickname,
+          roles: rids.map((rid) => roleById.get(rid)!),
+          affiliation: p.affiliation,
+          priority: pri
+        };
+      })
+      .sort((a, b) => (a.priority !== b.priority ? a.priority - b.priority : a.username.localeCompare(b.username)))
+      .slice(0, 5);
+    return { affiliations, members };
   } catch {
-    return { affiliations: [], members: [] };
+    return { affiliations: SEED_AFFILIATIONS, members: [] };
   }
 }
 

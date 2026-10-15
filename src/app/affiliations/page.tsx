@@ -1,18 +1,17 @@
 import Link from "next/link";
 import CodeTexture from "@/components/CodeTexture";
 import Ticker from "@/components/Ticker";
+import { prisma } from "@/lib/db";
+import { SEED_AFFILIATIONS } from "@/lib/site";
 
 export const revalidate = 60;
 
 async function getData() {
+  if (!prisma) return SEED_AFFILIATIONS;
   try {
-    const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000");
-    const res = await fetch(base + "/api/affiliations", { next: { revalidate: 60 } });
-    if (!res.ok) return [];
-    const d = await res.json();
-    return d.affiliations || [];
+    return await prisma.affiliation.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
   } catch {
-    return [];
+    return SEED_AFFILIATIONS;
   }
 }
 
