@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import RoleIcon from "@/components/RoleIcon";
+import { glow } from "@/lib/glow";
 
 export type RowMember = {
   id: string;
   identity: string;
+  glowColor?: string | null;
   username: string;
   globalName: string | null;
   avatar: string | null;
@@ -25,9 +27,18 @@ export default function MemberRow({ m, index }: { m: RowMember; index: number })
         {String(index + 1).padStart(2, "0")}
       </span>
       {m.avatar ? (
-        <img src={m.avatar} alt={display} loading="lazy" className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border border-line group-hover:border-black/30 shrink-0" />
+        <img
+          src={m.avatar}
+          alt={display}
+          loading="lazy"
+          className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border border-line group-hover:border-black/30 shrink-0"
+          style={glow(m.glowColor, 0.9) ? { boxShadow: "0 0 14px 2px " + glow(m.glowColor, 0.9) } : undefined}
+        />
       ) : (
-        <span className="w-11 h-11 md:w-14 md:h-14 rounded-full grid place-items-center border border-line font-display text-lg shrink-0">
+        <span
+          className="w-11 h-11 md:w-14 md:h-14 rounded-full grid place-items-center border border-line bg-black mono text-lg shrink-0"
+          style={glow(m.glowColor, 0.9) ? { boxShadow: "0 0 14px 2px " + glow(m.glowColor, 0.9) } : undefined}
+        >
           {display.slice(0, 1).toUpperCase()}
         </span>
       )}

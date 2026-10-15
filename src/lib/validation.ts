@@ -26,9 +26,15 @@ const musicUrl = z
     { message: "Unsupported music provider" }
   );
 
+const hexColor = z
+  .string()
+  .max(7)
+  .refine((v) => v === "" || /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v.trim()), { message: "Use a hex code like #a9f5d0" });
+
 export const profileUpdateSchema = z.object({
   bio: z.string().max(500).optional(),
   backgroundUrl: imageUrl.optional(),
+  glowColor: hexColor.optional(),
   location: z.string().max(120).optional(),
   timezone: z.string().max(80).optional()
 });

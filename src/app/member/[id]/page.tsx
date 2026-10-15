@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import TypewriterBio from "@/components/TypewriterBio";
 import DiscordBadges from "@/components/DiscordBadges";
 import RoleIcon from "@/components/RoleIcon";
+import { glow } from "@/lib/glow";
 import MusicPlayer from "@/components/MusicPlayer";
 import ProfileViewTracker from "@/components/ProfileViewTracker";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -28,6 +29,7 @@ type Profile = {
   flags: number;
   premiumType: number | null;
   boosting: boolean;
+  glowColor: string | null;
   affiliation: { name: string; description: string; logoUrl?: string | null; externalUrl?: string | null } | null;
 };
 
@@ -140,7 +142,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
-          <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1">
+          <aside
+            className="rounded-3xl border border-line bg-black/90 backdrop-blur p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1"
+            style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
+          >
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
             <div className="mt-4 text-left">
               <MusicPlayer url={profile.musicUrl} title={profile.trackTitle} artist={profile.trackArtist} cover={profile.trackCover} />
@@ -156,12 +161,28 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
           <section className="text-center px-2 order-1 lg:order-2">
             <div className="relative inline-block">
+              {glow(profile.glowColor, 0.55) ? (
+                <div className="absolute -inset-3 rounded-full glow-spin" aria-hidden="true" style={{ background: "conic-gradient(from 0deg, transparent 0%, " + glow(profile.glowColor, 0.85) + " 12%, transparent 26%, transparent 55%, " + glow(profile.glowColor, 0.6) + " 68%, transparent 82%)", filter: "blur(10px)" }} />
+              ) : null}
+              {glow(profile.glowColor, 0.5) ? (
+                <div className="absolute -inset-3 rounded-full glow-breathe" aria-hidden="true" style={{ boxShadow: "0 0 42px 10px " + glow(profile.glowColor, 0.5) }} />
+              ) : null}
               {profile.avatar ? (
-                <img src={profile.avatar} alt={display} className="w-36 h-36 md:w-44 md:h-44 rounded-full object-cover ring-2 ring-white/80 ring-offset-8 ring-offset-black mx-auto" />
+                <img
+                  src={profile.avatar}
+                  alt={display}
+                  className="relative w-36 h-36 md:w-44 md:h-44 rounded-full object-cover ring-2 ring-white/80 ring-offset-8 ring-offset-black mx-auto"
+                  style={glow(profile.glowColor, 0.9) ? { boxShadow: "0 0 26px 5px " + glow(profile.glowColor, 0.9) } : undefined}
+                />
               ) : (
-                <div className="w-36 h-36 md:w-44 md:h-44 rounded-full grid place-items-center border border-line font-display text-6xl bg-[#0b0b0b] mx-auto">{display.slice(0, 1).toUpperCase()}</div>
+                <div
+                  className="relative w-36 h-36 md:w-44 md:h-44 rounded-full grid place-items-center border border-line font-display text-6xl bg-[#0b0b0b] mx-auto"
+                  style={glow(profile.glowColor, 0.9) ? { boxShadow: "0 0 26px 5px " + glow(profile.glowColor, 0.9) } : undefined}
+                >
+                  {display.slice(0, 1).toUpperCase()}
+                </div>
               )}
-              <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border-4 border-black" aria-label="online" />
+              <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border-4 border-black z-10" aria-label="online" />
             </div>
             <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-6 break-words leading-none">{display}</h1>
             <div className="mono text-xs tracking-[0.25em] text-mist mt-3">@{profile.username}</div>
@@ -185,7 +206,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             <DiscordBadges flags={profile.flags} premiumType={profile.premiumType} boosting={profile.boosting} />
           </section>
 
-          <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3">
+          <aside
+            className="rounded-3xl border border-line bg-black/90 backdrop-blur p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3"
+            style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
+          >
             <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3">SERVERS</div>
             {servers.length === 0 ? (
               <div className="rounded-2xl border border-line p-4 mono text-[10px] tracking-[0.25em] text-mist">NO LINKED SERVERS</div>

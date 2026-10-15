@@ -6,6 +6,7 @@ export type EditableProfile = {
   id: string;
   bio: string;
   backgroundUrl: string | null;
+  glowColor: string | null;
   musicUrl: string | null;
   trackTitle: string | null;
   trackArtist: string | null;
@@ -18,6 +19,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
   const [form, setForm] = useState({
     bio: initial.bio || "",
     backgroundUrl: initial.backgroundUrl || "",
+    glowColor: initial.glowColor || "",
     location: initial.location || "",
     timezone: initial.timezone || ""
   });
@@ -46,6 +48,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         body: JSON.stringify({
           bio: form.bio.slice(0, 500),
           backgroundUrl: form.backgroundUrl,
+          glowColor: form.glowColor,
           location: form.location,
           timezone: form.timezone
         })
@@ -59,6 +62,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
           id: initial.id,
           bio: data.profile.bio,
           backgroundUrl: data.profile.backgroundUrl,
+          glowColor: data.profile.glowColor,
           musicUrl: data.profile.musicUrl,
           trackTitle: data.profile.trackTitle,
           trackArtist: data.profile.trackArtist,
@@ -106,6 +110,33 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         </div>
       ) : null}
       <div className="rounded-2xl border border-line p-4 mt-5 mono text-[11px] tracking-widest text-mist">MUSIC IS MANAGED BY THE ADMIN — ASK EGO TO SET YOUR TRACK</div>
+      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">AURA GLOW — HEX COLOR</label>
+      <div className="flex gap-3 items-center">
+        <input
+          type="color"
+          value={/^#[0-9a-fA-F]{6}$/.test(form.glowColor) ? form.glowColor : "#ffffff"}
+          onChange={(e) => setForm({ ...form, glowColor: e.target.value })}
+          aria-label="Pick glow color"
+          className="w-12 h-12 shrink-0 cursor-pointer bg-black border border-line p-1"
+        />
+        <input
+          value={form.glowColor}
+          onChange={(e) => setForm({ ...form, glowColor: e.target.value.slice(0, 7) })}
+          className="flex-1 bg-black border border-line p-3 text-sm mono text-white focus:border-white uppercase"
+          placeholder="#a9f5d0"
+          inputMode="text"
+        />
+        <span
+          className="w-12 h-12 rounded-full shrink-0 border border-line"
+          aria-hidden="true"
+          style={/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(form.glowColor.trim()) ? { background: form.glowColor.trim(), boxShadow: "0 0 18px 4px " + form.glowColor.trim() } : undefined}
+        />
+        {form.glowColor ? (
+          <button onClick={() => setForm({ ...form, glowColor: "" })} className="mono text-[11px] tracking-widest text-mist hover:text-white shrink-0">
+            CLEAR
+          </button>
+        ) : null}
+      </div>
       <div className="grid md:grid-cols-2 gap-4 mt-5">
         <div>
           <label className="block mono text-[11px] tracking-widest text-mist mb-2">LOCATION — OPTIONAL</label>
@@ -152,6 +183,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
             setForm({
               bio: initial.bio || "",
               backgroundUrl: initial.backgroundUrl || "",
+              glowColor: initial.glowColor || "",
               location: initial.location || "",
               timezone: initial.timezone || ""
             })

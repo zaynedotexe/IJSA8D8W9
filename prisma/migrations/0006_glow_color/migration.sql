@@ -1,0 +1,1 @@
+ALTER TABLE "Profile" ADD COLUMN "glowColor" VARCHAR(7);

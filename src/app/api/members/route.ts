@@ -51,6 +51,7 @@ export async function GET(req: Request) {
         identity: p.identity,
         bio: p.bio,
         backgroundUrl: p.backgroundUrl,
+        glowColor: p.glowColor,
         username: id.username,
         globalName: id.globalName,
         avatar: id.avatar,

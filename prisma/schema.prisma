@@ -39,6 +39,7 @@ model Profile {
   trackTitle String?          @db.VarChar(160)
   trackArtist String?         @db.VarChar(160)
   trackCover String?          @db.VarChar(2048)
+  glowColor  String?          @db.VarChar(7)
   location    String?          @db.VarChar(120)
   timezone    String?          @db.VarChar(80)
   visible     Boolean          @default(true)
