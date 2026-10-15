@@ -4,7 +4,7 @@ const imageUrl = z
   .string()
   .max(2048)
   .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v) || /^\/[^\s]*$/i.test(v), { message: "Invalid URL" })
-  .refine((v) => v === "" || /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(v), { message: "Only PNG JPG JPEG GIF allowed" });
+  .refine((v) => v === "" || /\.(png|jpe?g|gif|webp|mp4|webm)(\?.*)?$/i.test(v), { message: "Only PNG JPG GIF WEBP MP4 WEBM allowed" });
 
 const musicUrl = z
   .string()

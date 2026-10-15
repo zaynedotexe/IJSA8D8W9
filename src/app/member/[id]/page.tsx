@@ -134,6 +134,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
   const display = profile.nickname || profile.globalName || profile.username || "UNKNOWN";
   const showBg = profile.backgroundUrl && bgOk;
+  const bgIsVideo = Boolean(profile.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(profile.backgroundUrl));
   const needsGate = Boolean(profile.musicUrl && /\.(mp3|ogg|wav|m4a)(\?.*)?$/i.test(profile.musicUrl));
 
   function enter() {
@@ -155,7 +156,11 @@ export default function MemberPage({ params }: { params: { id: string } }) {
       ) : null}
       {showBg ? (
         <div className="fixed inset-0 z-0">
-          <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
+          {bgIsVideo ? (
+            <video src={profile.backgroundUrl!} autoPlay muted loop playsInline preload="auto" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
+          ) : (
+            <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
+          )}
           <div className="absolute inset-0 bg-black/80" />
         </div>
       ) : (
