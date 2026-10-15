@@ -94,17 +94,17 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const showBg = profile.backgroundUrl && bgOk;
 
   return (
-    <div className="relative">
+    <div className="relative isolate">
       <ProfileViewTracker id={profile.id} />
       {showBg ? (
-        <div className="fixed inset-0 -z-10">
-          <img src={profile.backgroundUrl!} alt="" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
+        <div className="fixed inset-0 z-0">
+          <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
           <div className="absolute inset-0 bg-black/75" />
         </div>
       ) : (
         <div className="fixed inset-0 -z-10 bg-[#050505] bg-grid" />
       )}
-      <div className="px-5 md:px-10 py-10 md:py-14 max-w-4xl mx-auto">
+      <div className="relative z-10 px-5 md:px-10 py-10 md:py-14 max-w-4xl mx-auto">
         <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
         <div className="mt-6 rounded-3xl border border-line bg-black/85 backdrop-blur p-6 md:p-10 overflow-hidden">
           <div className="mono text-[10px] tracking-[0.4em] text-mist">LONESTAR — PROFILE</div>

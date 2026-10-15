@@ -45,15 +45,17 @@ export default function MusicPlayer({ url }: { url: string | null }) {
   if (spotify) {
     return (
       <div className="w-full">
-        <iframe
-          src={spotify}
-          width="100%"
-          height="152"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-          title="Spotify player"
-          className="border border-line"
-        />
+        <div className="rounded-2xl overflow-hidden border border-line bg-black leading-[0]">
+          <iframe
+            src={spotify}
+            width="100%"
+            height="152"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            title="Spotify player"
+            className="border-0"
+          />
+        </div>
         <a href={url} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white mt-2 inline-block">
           OPEN IN SPOTIFY ↗
         </a>
