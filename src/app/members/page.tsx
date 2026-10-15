@@ -7,8 +7,6 @@ import MemberRow, { type RowMember } from "@/components/MemberRow";
 import RoleIcon from "@/components/RoleIcon";
 import { glow } from "@/lib/glow";
 
-type Role = { roleId: string; name: string };
-
 function Spotlight({ m, index, total }: { m: RowMember; index: number; total: number }) {
   const display = m.nickname || m.globalName || m.username;
   return (
@@ -50,9 +48,6 @@ function Spotlight({ m, index, total }: { m: RowMember; index: number; total: nu
 
 export default function MembersPage() {
   const [members, setMembers] = useState<RowMember[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [search, setSearch] = useState("");
-  const [role, setRole] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -62,26 +57,8 @@ export default function MembersPage() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    fetch("/api/roles", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => {
-        const seen = new Set<string>();
-        const unique: Role[] = [];
-        for (const r of (d.roles || []) as Role[]) {
-          const key = r.name.toLowerCase();
-          if (!seen.has(key)) {
-            seen.add(key);
-            unique.push(r);
-          }
-        }
-        setRoles(unique);
-      })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ search, role, page: String(page), limit: view === "spotlight" ? "50" : "20" });
+    const params = new URLSearchParams({ page: String(page), limit: view === "spotlight" ? "50" : "20" });
     fetch("/api/members?" + params.toString(), { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
@@ -92,7 +69,7 @@ export default function MembersPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [search, role, page, view]);
+  }, [page, view]);
 
   useEffect(() => {
     if (view !== "spotlight" || members.length < 2 || paused) return;
@@ -135,49 +112,6 @@ export default function MembersPage() {
               ))}
             </div>
           </div>
-          <div className="flex flex-col md:flex-row gap-3 mt-8 max-w-3xl">
-            <div className="flex-1 flex items-center gap-3 bg-[#0b0b0b] border border-line rounded-full px-5 py-3 focus-within:border-white transition-colors">
-              <span className="mono text-fog" aria-hidden="true">⌕</span>
-              <input
-                value={search}
-                onChange={(e) => {
-                  setPage(1);
-                  setSearch(e.target.value);
-                }}
-                placeholder="Search the index..."
-                className="flex-1 bg-transparent mono text-xs tracking-widest text-white placeholder:text-mist focus:outline-none"
-              />
-            </div>
-          </div>
-          <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
-            <button
-              onClick={() => {
-                setPage(1);
-                setRole("");
-              }}
-              className={
-                "mono text-[10px] tracking-[0.2em] rounded-full px-4 py-2 border shrink-0 transition-colors " +
-                (role === "" ? "bg-white text-black border-white" : "text-fog border-line hover:text-white hover:border-white")
-              }
-            >
-              ALL
-            </button>
-            {roles.map((r) => (
-              <button
-                key={r.name}
-                onClick={() => {
-                  setPage(1);
-                  setRole(role === r.name ? "" : r.name);
-                }}
-                className={
-                  "mono text-[10px] tracking-[0.2em] rounded-full px-4 py-2 border shrink-0 transition-colors " +
-                  (role === r.name ? "bg-white text-black border-white" : "text-fog border-line hover:text-white hover:border-white")
-                }
-              >
-                {r.name}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -191,7 +125,7 @@ export default function MembersPage() {
           ) : !current ? (
             <div className="py-20 text-center border-t border-line">
               <div className="font-display text-3xl text-outline-faint">NO SIGNAL</div>
-              <div className="text-fog text-sm mt-3">Try a different search or caste.</div>
+              <div className="text-fog text-sm mt-3">The index is empty — check back soon.</div>
             </div>
           ) : (
             <div className="border-t border-line">
@@ -248,7 +182,7 @@ export default function MembersPage() {
             ) : members.length === 0 ? (
               <div className="py-20 text-center">
                 <div className="font-display text-3xl text-outline-faint">NO SIGNAL</div>
-                <div className="text-fog text-sm mt-3">Try a different search or caste.</div>
+                <div className="text-fog text-sm mt-3">The index is empty — check back soon.</div>
               </div>
             ) : (
               members.map((m, i) => <MemberRow key={m.id} m={m} index={(page - 1) * 20 + i} />)
