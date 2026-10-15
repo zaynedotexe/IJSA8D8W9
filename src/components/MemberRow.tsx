@@ -8,6 +8,7 @@ export type RowMember = {
   id: string;
   identity: string;
   glowColor?: string | null;
+  backgroundUrl?: string | null;
   username: string;
   globalName: string | null;
   avatar: string | null;
