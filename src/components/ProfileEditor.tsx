@@ -27,6 +27,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
   const [saving, setSaving] = useState(false);
   const [bgError, setBgError] = useState(false);
   const [zones, setZones] = useState<string[]>([]);
+  const [zoneSearch, setZoneSearch] = useState("");
 
   useEffect(() => {
     try {
@@ -37,6 +38,8 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
       }
     } catch {}
   }, []);
+
+  const filteredZones = zones.filter((z) => z.toLowerCase().includes(zoneSearch.trim().toLowerCase()));
 
   async function save() {
     setSaving(true);
@@ -150,16 +153,27 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         <div>
           <label className="block mono text-[11px] tracking-widest text-mist mb-2">TIMEZONE — OPTIONAL</label>
           {zones.length > 0 ? (
-            <select
-              value={zones.includes(form.timezone) || form.timezone === "" ? form.timezone : ""}
-              onChange={(e) => setForm({ ...form, timezone: e.target.value.slice(0, 80) })}
-              className="w-full bg-black border border-line p-3 text-sm mono text-white focus:border-white"
-            >
-              <option value="">— SELECT —</option>
-              {zones.map((z) => (
-                <option key={z} value={z}>{z}</option>
-              ))}
-            </select>
+            <div>
+              <input
+                value={zoneSearch}
+                onChange={(e) => setZoneSearch(e.target.value)}
+                className="w-full bg-black border border-line p-3 text-sm mono text-white focus:border-white mb-2"
+                placeholder="Type to filter — try manila"
+              />
+              <select
+                value={zones.includes(form.timezone) || form.timezone === "" ? form.timezone : ""}
+                onChange={(e) => setForm({ ...form, timezone: e.target.value.slice(0, 80) })}
+                className="w-full bg-black border border-line p-3 text-sm mono text-white focus:border-white"
+              >
+                <option value="">— SELECT ({filteredZones.length}) —</option>
+                {form.timezone && !filteredZones.includes(form.timezone) && zones.includes(form.timezone) ? (
+                  <option value={form.timezone}>{form.timezone}</option>
+                ) : null}
+                {filteredZones.slice(0, 400).map((z) => (
+                  <option key={z} value={z}>{z}</option>
+                ))}
+              </select>
+            </div>
           ) : (
             <input
               value={form.timezone}
