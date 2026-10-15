@@ -64,7 +64,7 @@ export default async function Home() {
             <img src="/lonestar-wordmark.png" alt="LONESTAR" className="w-full max-w-3xl mt-6 mx-auto select-none drift-slow" loading="eager" />
             <h1 className="sr-only">LONESTAR</h1>
             <p className="text-fog max-w-xl mx-auto mt-6 leading-relaxed text-sm md:text-base">
-              A quiet collective of distinct identities. Minimal noise. Precise presence. Membership is earned, profiles are curated, and every signal matters.
+              Private by choice. Loyal by principle. No snitches. No drama. Just business.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
               <Link href="/members" className="mono text-xs tracking-[0.25em] bg-white text-black rounded-full px-8 py-4 hover:bg-fog transition-colors">
