@@ -20,13 +20,22 @@ type Profile = {
   globalName: string | null;
   avatar: string | null;
   nickname: string | null;
-  affiliation: { name: string; description: string } | null;
+  affiliation: { name: string; description: string; logoUrl?: string | null } | null;
 };
 
 function localTime(tz: string | null): string {
   if (!tz) return "";
   try {
     return new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date());
+  } catch {
+    return "";
+  }
+}
+
+function localDate(tz: string | null): string {
+  if (!tz) return "";
+  try {
+    return new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: tz }).format(new Date());
   } catch {
     return "";
   }
@@ -39,6 +48,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const [missing, setMissing] = useState(false);
   const [bgOk, setBgOk] = useState(true);
   const [clock, setClock] = useState("");
+  const [today, setToday] = useState("");
 
   useEffect(() => {
     fetch("/api/profiles/" + params.id, { cache: "no-store" })
@@ -66,8 +76,12 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!profile?.timezone) return;
-    setClock(localTime(profile.timezone));
-    const t = window.setInterval(() => setClock(localTime(profile.timezone)), 30000);
+    const update = () => {
+      setClock(localTime(profile.timezone));
+      setToday(localDate(profile.timezone));
+    };
+    update();
+    const t = window.setInterval(update, 10000);
     return () => window.clearInterval(t);
   }, [profile?.timezone]);
 
@@ -102,67 +116,85 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           <div className="absolute inset-0 bg-black/75" />
         </div>
       ) : (
-        <div className="fixed inset-0 -z-10 bg-[#050505] bg-grid" />
+        <div className="fixed inset-0 z-0 bg-[#050505] bg-grid" />
       )}
-      <div className="relative z-10 px-5 md:px-10 py-10 md:py-14 max-w-4xl mx-auto">
+      <div className="relative z-10 px-4 md:px-10 py-8 md:py-12 max-w-3xl mx-auto">
         <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
-        <div className="mt-6 rounded-3xl border border-line bg-black/85 backdrop-blur p-6 md:p-10 overflow-hidden">
-          <div className="mono text-[10px] tracking-[0.4em] text-mist">LONESTAR — PROFILE</div>
-          <div className="flex flex-col sm:flex-row gap-6 mt-6 items-start">
-            {profile.avatar ? (
-              <img src={profile.avatar} alt={display} className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border border-line" />
-            ) : (
-              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full grid place-items-center border border-line font-display text-4xl bg-[#0b0b0b]">{display.slice(0, 1).toUpperCase()}</div>
-            )}
-            <div className="flex-1 min-w-0">
-              <h1 className="font-display text-3xl md:text-5xl tracking-wide break-words leading-none">{display}</h1>
-              <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">@{profile.username} — {profile.identity}</div>
-              <div className="flex flex-wrap gap-1.5 mt-4">
-                {roles.map((r) => (
-                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line text-fog rounded-full px-3 py-1">{r.name}</span>
-                ))}
+
+        <div className="mt-5 rounded-3xl border border-line bg-black/90 backdrop-blur overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-line">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]" aria-hidden="true" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]" aria-hidden="true" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white" aria-hidden="true" />
+            <span className="mono text-[11px] tracking-[0.2em] text-fog ml-3 truncate">
+              lonestar@network:~<span className="caret-blink">█</span>
+            </span>
+            <span className="mono text-[10px] tracking-[0.25em] text-mist ml-auto shrink-0 hidden sm:inline">
+              {count === null ? "—" : count.toLocaleString()} VIEWS
+            </span>
+          </div>
+
+          <div className="p-6 md:p-9">
+            <div className="flex flex-col sm:flex-row gap-6 items-start">
+              <div className="relative shrink-0">
+                {profile.avatar ? (
+                  <img src={profile.avatar} alt={display} className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-2 ring-white/80 ring-offset-4 ring-offset-black" />
+                ) : (
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full grid place-items-center border border-line font-display text-4xl bg-[#0b0b0b]">{display.slice(0, 1).toUpperCase()}</div>
+                )}
+                <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-white border-2 border-black" aria-label="online" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="mono text-[10px] tracking-[0.35em] text-mist">$ whoami</div>
+                <h1 className="font-display text-3xl md:text-5xl tracking-wide break-words leading-none mt-1">{display}</h1>
+                <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">@{profile.username} — {profile.identity}</div>
+                <div className="mono text-[11px] tracking-[0.15em] text-fog mt-3">
+                  {profile.location || "UNDISCLOSED"}
+                  {profile.timezone ? " · " + (clock || "--:--") + (today ? " · " + today : "") : ""}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="border-t border-line mt-8 pt-6">
-            <div className="mono text-[10px] tracking-[0.35em] text-mist">TRANSMISSION</div>
-            <div className="mono text-sm leading-relaxed mt-3 min-h-[3.5rem] whitespace-pre-wrap break-words">
-              <TypewriterBio bio={profile.bio} />
-            </div>
-          </div>
+            {roles.length > 0 ? (
+              <div className="mt-7">
+                <div className="mono text-[10px] tracking-[0.35em] text-mist">$ roles --show</div>
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {roles.map((r) => (
+                    <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] bg-white text-black rounded-full px-3.5 py-1.5">{r.name}</span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
-          <div className="grid grid-cols-3 gap-2 md:gap-3 mt-8">
-            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">VIEWS</div>
-              <div className="font-display text-xl md:text-2xl mt-1">{count === null ? "—" : count.toLocaleString()}</div>
-            </div>
-            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">BASE</div>
-              <div className="mono text-xs md:text-sm mt-1.5 truncate">{profile.location || "UNDISCLOSED"}</div>
-            </div>
-            <div className="rounded-2xl bg-[#0b0b0b] border border-line p-4">
-              <div className="mono text-[10px] tracking-[0.3em] text-mist">LOCAL</div>
-              <div className="mono text-xs md:text-sm mt-1.5 truncate">{profile.timezone ? (clock || "—") : "—"}</div>
-            </div>
-          </div>
-
-          {profile.affiliation ? (
-            <div className="rounded-2xl border border-line mt-3 p-4 flex gap-4 items-center">
-              <span className="w-11 h-11 rounded-xl grid place-items-center border border-line font-display text-lg bg-[#0b0b0b] shrink-0">{profile.affiliation.name.slice(0, 1)}</span>
-              <div>
-                <div className="mono text-[10px] tracking-[0.3em] text-mist">AFFILIATION</div>
-                <div className="font-display tracking-wide mt-0.5">{profile.affiliation.name}</div>
+            <div className="mt-7 rounded-2xl bg-[#0b0b0b] border border-line p-5">
+              <div className="mono text-[10px] tracking-[0.35em] text-mist">$ cat transmission.txt</div>
+              <div className="mono text-sm leading-relaxed mt-3 min-h-[3rem] whitespace-pre-wrap break-words">
+                <TypewriterBio bio={profile.bio} />
               </div>
             </div>
-          ) : null}
 
-          <div className="mt-8">
-            <div className="mono text-[10px] tracking-[0.35em] text-mist mb-3">SOUND</div>
-            <MusicPlayer url={profile.musicUrl} />
+            <div className="mt-5">
+              <div className="mono text-[10px] tracking-[0.35em] text-mist mb-3">$ now-playing</div>
+              <MusicPlayer url={profile.musicUrl} />
+            </div>
+
+            {profile.affiliation ? (
+              <Link href="/affiliations" className="group flex items-center gap-4 mt-5 rounded-2xl border border-line p-4 hover:border-white transition-colors">
+                {profile.affiliation.logoUrl ? (
+                  <img src={profile.affiliation.logoUrl} alt={profile.affiliation.name} loading="lazy" className="w-12 h-12 rounded-xl object-cover border border-line grayscale shrink-0" />
+                ) : (
+                  <span className="w-12 h-12 rounded-xl grid place-items-center border border-line font-display text-xl bg-[#0b0b0b] shrink-0">{profile.affiliation.name.slice(0, 1)}</span>
+                )}
+                <span className="flex-1 min-w-0">
+                  <span className="mono text-[10px] tracking-[0.3em] text-mist block">SERVER BANNER — AFFILIATED</span>
+                  <span className="font-display tracking-wide block truncate">{profile.affiliation.name}</span>
+                </span>
+                <span className="mono group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
+              </Link>
+            ) : null}
+
+            <div className="mono text-[10px] tracking-[0.35em] text-mist mt-8 text-center">LONESTAR ON TOP — MADE BY EGO</div>
           </div>
-
-          <div className="mono text-[10px] tracking-[0.35em] text-mist mt-8 text-center">LONESTAR ON TOP — MADE BY EGO</div>
         </div>
       </div>
     </div>
