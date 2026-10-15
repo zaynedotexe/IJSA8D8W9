@@ -11,7 +11,7 @@ export default function LoadingScreen({ label = "LONESTAR" }: { label?: string }
       setVisible(false);
       return;
     }
-    const t = window.setTimeout(() => setVisible(false), 1100);
+    const t = window.setTimeout(() => setVisible(false), 2400);
     return () => window.clearTimeout(t);
   }, []);
 
