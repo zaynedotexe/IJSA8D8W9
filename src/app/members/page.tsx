@@ -19,7 +19,18 @@ export default function MembersPage() {
   useEffect(() => {
     fetch("/api/roles", { cache: "no-store" })
       .then((r) => r.json())
-      .then((d) => setRoles(d.roles || []))
+      .then((d) => {
+        const seen = new Set<string>();
+        const unique: Role[] = [];
+        for (const r of (d.roles || []) as Role[]) {
+          const key = r.name.toLowerCase();
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(r);
+          }
+        }
+        setRoles(unique);
+      })
       .catch(() => {});
   }, []);
 
@@ -75,14 +86,14 @@ export default function MembersPage() {
             </button>
             {roles.map((r) => (
               <button
-                key={r.roleId}
+                key={r.name}
                 onClick={() => {
                   setPage(1);
-                  setRole(role === r.roleId ? "" : r.roleId);
+                  setRole(role === r.name ? "" : r.name);
                 }}
                 className={
                   "mono text-[10px] tracking-[0.2em] rounded-full px-4 py-2 border shrink-0 transition-colors " +
-                  (role === r.roleId ? "bg-white text-black border-white" : "text-fog border-line hover:text-white hover:border-white")
+                  (role === r.name ? "bg-white text-black border-white" : "text-fog border-line hover:text-white hover:border-white")
                 }
               >
                 {r.name}

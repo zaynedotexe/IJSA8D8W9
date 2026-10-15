@@ -35,7 +35,11 @@ export async function GET(req: Request) {
       });
     }
     if (role) {
-      rows = rows.filter((p) => (p.discordIdentity?.roleIds || []).includes(role));
+      const exact = roles.find((r) => r.roleId === role);
+      const accepted = exact
+        ? [role]
+        : roles.filter((r) => r.name.toLowerCase() === role.toLowerCase()).map((r) => r.roleId);
+      rows = rows.filter((p) => (p.discordIdentity?.roleIds || []).some((rid) => accepted.includes(rid)));
     }
     const mapped = rows.map((p) => {
       const id = p.discordIdentity!;
