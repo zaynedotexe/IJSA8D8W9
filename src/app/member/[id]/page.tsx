@@ -166,14 +166,16 @@ export default function MemberPage({ params }: { params: { id: string } }) {
       {showBg ? (
         <div className="fixed inset-0 z-0 overflow-hidden">
           {bgYoutubeId ? (
-            <iframe
-              src={"https://www.youtube-nocookie.com/embed/" + bgYoutubeId + "?autoplay=1&mute=1&loop=1&playlist=" + bgYoutubeId + "&controls=0&rel=0&playsinline=1"}
-              title="Background video"
-              allow="autoplay; encrypted-media"
-              className="absolute pointer-events-none"
-              style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
-              loading="lazy"
-            />
+            <div className="absolute inset-0">
+              <img src={"https://i.ytimg.com/vi/" + bgYoutubeId + "/maxresdefault.jpg"} alt="" aria-hidden="true" loading="eager" referrerPolicy="no-referrer" className="absolute inset-0 w-full h-full object-cover" />
+              <iframe
+                src={"https://www.youtube-nocookie.com/embed/" + bgYoutubeId + "?autoplay=1&mute=1&loop=1&playlist=" + bgYoutubeId + "&controls=0&rel=0&playsinline=1"}
+                title="Background video"
+                allow="autoplay; encrypted-media"
+                className="absolute pointer-events-none"
+                style={{ width: "130%", height: "130%", left: "-15%", top: "-15%" }}
+              />
+            </div>
           ) : bgIsVideo ? (
             <video src={profile.backgroundUrl!} autoPlay muted loop playsInline preload="auto" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
           ) : (
