@@ -212,6 +212,7 @@ export default function MusicPlayer({ url, title, artist, cover }: { url: string
             ref={audioRef}
             src={url}
             preload="auto"
+            loop
             onTimeUpdate={(e) => setPos((e.target as HTMLAudioElement).currentTime)}
             onLoadedMetadata={(e) => {
               const el = e.target as HTMLAudioElement;
