@@ -123,13 +123,13 @@ export default function MemberPage({ params }: { params: { id: string } }) {
       <img src="/lonestar-emblem.png" alt="" aria-hidden="true" className="pointer-events-none fixed -right-10 top-16 w-56 opacity-[0.07] rotate-12 z-0 hidden md:block" />
       <img src="/lonestar-emblem.png" alt="" aria-hidden="true" className="pointer-events-none fixed -left-12 bottom-24 w-64 opacity-[0.07] -rotate-12 z-0 hidden md:block" />
 
-      <div className="relative z-10 px-4 md:px-8 pt-6 pb-14 max-w-6xl mx-auto">
+      <div className="relative z-10 px-4 md:px-8 pt-6 pb-14 max-w-6xl mx-auto min-h-[88vh] flex flex-col justify-center">
         <div className="flex items-center justify-between">
           <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
           <span className="mono text-[10px] tracking-[0.3em] text-mist hidden sm:inline">lonestar@network:~<span className="caret-blink">█</span></span>
         </div>
 
-        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-start">
+        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
           <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1">
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
             <div className="mt-4 text-left">
