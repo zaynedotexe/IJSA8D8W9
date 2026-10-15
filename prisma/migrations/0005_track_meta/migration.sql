@@ -1,0 +1,3 @@
+ALTER TABLE "Profile" ADD COLUMN "trackTitle" VARCHAR(160);
+ALTER TABLE "Profile" ADD COLUMN "trackArtist" VARCHAR(160);
+ALTER TABLE "Profile" ADD COLUMN "trackCover" VARCHAR(2048);

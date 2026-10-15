@@ -36,6 +36,9 @@ model Profile {
   bio         String           @default("") @db.Text
   backgroundUrl String?        @db.VarChar(2048)
   musicUrl    String?          @db.VarChar(2048)
+  trackTitle String?          @db.VarChar(160)
+  trackArtist String?         @db.VarChar(160)
+  trackCover String?          @db.VarChar(2048)
   location    String?          @db.VarChar(120)
   timezone    String?          @db.VarChar(80)
   visible     Boolean          @default(true)

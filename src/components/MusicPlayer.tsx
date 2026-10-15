@@ -43,7 +43,7 @@ function fmt(sec: number): string {
   return m + ":" + String(s).padStart(2, "0");
 }
 
-export default function MusicPlayer({ url }: { url: string | null }) {
+export default function MusicPlayer({ url, title, artist, cover }: { url: string | null; title?: string | null; artist?: string | null; cover?: string | null }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -100,14 +100,14 @@ export default function MusicPlayer({ url }: { url: string | null }) {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center text-center">
-        {meta?.cover ? (
-          <img src={meta.cover} alt="" loading="lazy" referrerPolicy="no-referrer" className="w-24 h-24 rounded-2xl object-cover border border-line" />
+        {meta?.cover || (isDirect && cover) ? (
+          <img src={(isDirect && cover) || meta?.cover || ""} alt="" loading="lazy" referrerPolicy="no-referrer" className="w-24 h-24 rounded-2xl object-cover border border-line" />
         ) : (
           <div className="w-24 h-24 rounded-2xl border border-line bg-[#0b0b0b] grid place-items-center mono text-2xl text-mist">♪</div>
         )}
         <div className="mono text-[11px] tracking-[0.3em] text-fog mt-4">♪ NOW PLAYING</div>
-        <div className="font-display text-lg tracking-wide mt-1 break-words max-w-full">{meta?.title || (isDirect ? "DIRECT AUDIO" : "LOADING…")}</div>
-        <div className="text-fog text-sm">{meta?.artist || (isDirect ? "UNKNOWN ARTIST" : "")}</div>
+        <div className="font-display text-lg tracking-wide mt-1 break-words max-w-full">{(isDirect && title) || meta?.title || (isDirect ? "DIRECT AUDIO" : "LOADING…")}</div>
+        <div className="text-fog text-sm">{(isDirect && artist) || meta?.artist || (isDirect ? "UNKNOWN ARTIST" : "")}</div>
 
         {isDirect ? (
           <button

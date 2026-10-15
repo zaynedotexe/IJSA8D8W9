@@ -7,6 +7,9 @@ export type EditableProfile = {
   bio: string;
   backgroundUrl: string | null;
   musicUrl: string | null;
+  trackTitle: string | null;
+  trackArtist: string | null;
+  trackCover: string | null;
   location: string | null;
   timezone: string | null;
 };
@@ -16,6 +19,9 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
     bio: initial.bio || "",
     backgroundUrl: initial.backgroundUrl || "",
     musicUrl: initial.musicUrl || "",
+    trackTitle: initial.trackTitle || "",
+    trackArtist: initial.trackArtist || "",
+    trackCover: initial.trackCover || "",
     location: initial.location || "",
     timezone: initial.timezone || ""
   });
@@ -34,6 +40,9 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
           bio: form.bio.slice(0, 500),
           backgroundUrl: form.backgroundUrl,
           musicUrl: form.musicUrl,
+          trackTitle: form.trackTitle,
+          trackArtist: form.trackArtist,
+          trackCover: form.trackCover,
           location: form.location,
           timezone: form.timezone
         })
@@ -48,6 +57,9 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
           bio: data.profile.bio,
           backgroundUrl: data.profile.backgroundUrl,
           musicUrl: data.profile.musicUrl,
+          trackTitle: data.profile.trackTitle,
+          trackArtist: data.profile.trackArtist,
+          trackCover: data.profile.trackCover,
           location: data.profile.location,
           timezone: data.profile.timezone
         });
@@ -98,6 +110,33 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         placeholder="https://open.spotify.com/..."
         inputMode="url"
       />
+      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">TRACK DETAILS — FOR DIRECT MP3 FILES</label>
+      <div className="grid md:grid-cols-2 gap-3">
+        <input
+          value={form.trackTitle}
+          onChange={(e) => setForm({ ...form, trackTitle: e.target.value.slice(0, 160) })}
+          className="bg-black border border-line p-3 text-sm mono text-white focus:border-white"
+          placeholder="Song title"
+        />
+        <input
+          value={form.trackArtist}
+          onChange={(e) => setForm({ ...form, trackArtist: e.target.value.slice(0, 160) })}
+          className="bg-black border border-line p-3 text-sm mono text-white focus:border-white"
+          placeholder="Artist"
+        />
+      </div>
+      <div className="flex gap-3 mt-3 items-start">
+        <input
+          value={form.trackCover}
+          onChange={(e) => setForm({ ...form, trackCover: e.target.value.slice(0, 2048) })}
+          className="flex-1 bg-black border border-line p-3 text-sm mono text-white focus:border-white"
+          placeholder="Cover image URL — PNG JPG GIF"
+          inputMode="url"
+        />
+        {form.trackCover ? (
+          <img src={form.trackCover} alt="Cover preview" className="w-12 h-12 rounded-xl object-cover border border-line shrink-0" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+        ) : null}
+      </div>
       <div className="grid md:grid-cols-2 gap-4 mt-5">
         <div>
           <label className="block mono text-[11px] tracking-widest text-mist mb-2">LOCATION — OPTIONAL</label>
@@ -132,6 +171,9 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
               bio: initial.bio || "",
               backgroundUrl: initial.backgroundUrl || "",
               musicUrl: initial.musicUrl || "",
+              trackTitle: initial.trackTitle || "",
+              trackArtist: initial.trackArtist || "",
+              trackCover: initial.trackCover || "",
               location: initial.location || "",
               timezone: initial.timezone || ""
             })

@@ -15,6 +15,9 @@ type Profile = {
   bio: string;
   backgroundUrl: string | null;
   musicUrl: string | null;
+  trackTitle: string | null;
+  trackArtist: string | null;
+  trackCover: string | null;
   location: string | null;
   timezone: string | null;
   views: number;
@@ -140,7 +143,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1">
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
             <div className="mt-4 text-left">
-              <MusicPlayer url={profile.musicUrl} />
+              <MusicPlayer url={profile.musicUrl} title={profile.trackTitle} artist={profile.trackArtist} cover={profile.trackCover} />
             </div>
             <div className="border-t border-line mt-5 pt-5">
               <div className="mono text-[11px] tracking-[0.2em] text-fog">{profile.location ? "◉ " + profile.location.toLowerCase() : "◉ undisclosed"}</div>
