@@ -236,9 +236,11 @@ export default function MusicPlayer({ url, title, artist, cover }: { url: string
         </div>
       ) : null}
 
-      <a href={url} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-[0.25em] text-mist hover:text-white mt-4 inline-block">
-        OPEN IN {kind === "spotify" ? "SPOTIFY" : kind === "youtube" ? "YOUTUBE" : "SOURCE"} ↗
-      </a>
+      {!isDirect && (kind === "spotify" || kind === "youtube") ? (
+        <a href={url} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-[0.25em] text-mist hover:text-white mt-4 inline-block">
+          OPEN IN {kind === "spotify" ? "SPOTIFY" : "YOUTUBE"} ↗
+        </a>
+      ) : null}
     </div>
   );
 }
