@@ -159,7 +159,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
 
         <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
           <aside
-            className="rounded-3xl glass shine-card float-a p-6 text-center order-2 lg:order-1"
+            className="rounded-3xl glass shine-card float-a p-6 text-center order-2 lg:order-1 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
@@ -223,14 +223,15 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </section>
 
           <aside
-            className="rounded-3xl glass shine-card float-b p-5 order-3"
+            className="rounded-3xl glass shine-card float-b p-5 order-3 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
-            <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3">SERVERS</div>
+            <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3 shrink-0">SERVERS</div>
             {servers.length === 0 ? (
               <div className="rounded-2xl border border-line p-4 mono text-[10px] tracking-[0.25em] text-mist">NO LINKED SERVERS</div>
             ) : (
-              servers.map((s) => (
+              <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto thin-scroll lg:-mx-1 lg:px-1">
+              {servers.map((s) => (
                 <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0">
                   {s.logoUrl ? (
                     <img src={s.logoUrl} alt={s.name} loading="lazy" className="w-full h-28 object-cover grayscale" />
@@ -248,7 +249,8 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                     ) : null}
                   </div>
                 </div>
-              ))
+              ))}
+              </div>
             )}
           </aside>
         </div>
