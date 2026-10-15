@@ -9,63 +9,62 @@ import type { RowMember } from "@/components/MemberRow";
 
 function StackCard({ m, index, total }: { m: RowMember; index: number; total: number }) {
   const display = m.nickname || m.globalName || m.username;
-  const left = index % 2 === 0;
+  const artFirst = index % 2 === 1;
   return (
-    <div className="md:[perspective:1400px]">
+    <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
       <Link
         href={"/member/" + encodeURIComponent(m.username || m.id)}
-        className={
-          "group relative block w-full rounded-[28px] border border-white/10 bg-[#0a0a0a] overflow-hidden transition-transform duration-500 ease-out " +
-          "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +
-          (left ? "md:[transform:rotateY(-4deg)_rotateX(1deg)]" : "md:[transform:rotateY(4deg)_rotateX(1deg)]")
-        }
-        style={glow(m.glowColor, 0.35) ? { boxShadow: "0 30px 90px -20px " + glow(m.glowColor, 0.35) } : undefined}
+        className={"group flex items-center gap-4 md:col-span-4 " + (artFirst ? "md:order-2" : "md:order-1")}
       >
-        <div className="relative h-72 md:h-[420px] overflow-hidden">
+        {m.avatar ? (
+          <img
+            src={m.avatar}
+            alt={display}
+            loading="lazy"
+            className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-line shrink-0 transition-transform duration-500 group-hover:scale-105"
+            style={glow(m.glowColor, 0.9) ? { boxShadow: "0 0 18px 4px " + glow(m.glowColor, 0.9) } : undefined}
+          />
+        ) : (
+          <span className="w-16 h-16 md:w-20 md:h-20 rounded-full grid place-items-center border border-line bg-[#0b0b0b] font-display text-3xl shrink-0">
+            {display.slice(0, 1).toUpperCase()}
+          </span>
+        )}
+        <span className="min-w-0 text-left">
+          <span className="font-display text-2xl md:text-4xl tracking-wide block truncate">{display}</span>
+          <span className="mono text-[10px] md:text-[11px] tracking-[0.2em] text-mist mt-1 block truncate">@{m.username}</span>
+          <span className="mono text-[10px] tracking-[0.2em] text-fog mt-1 hidden md:flex flex-wrap gap-1.5">
+            {m.roles.slice(0, 3).map((r) => (
+              <span key={r.roleId} className="border border-line rounded-full px-2.5 py-0.5 flex items-center gap-1">
+                <RoleIcon roleId={r.roleId} icon={r.icon} emoji={r.unicodeEmoji} size={11} />
+                {r.name}
+              </span>
+            ))}
+          </span>
+        </span>
+      </Link>
+      <div className={"md:col-span-8 md:[perspective:1400px] " + (artFirst ? "md:order-1" : "md:order-2")}>
+        <Link
+          href={"/member/" + encodeURIComponent(m.username || m.id)}
+          aria-label={"Open " + display + "'s profile"}
+          className={
+            "group relative block w-full h-64 md:h-[380px] rounded-[28px] border border-white/10 overflow-hidden transition-transform duration-500 ease-out " +
+            "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +
+            (artFirst ? "md:[transform:rotateY(5deg)_rotateX(1deg)]" : "md:[transform:rotateY(-5deg)_rotateX(1deg)]")
+          }
+          style={glow(m.glowColor, 0.35) ? { boxShadow: "0 30px 90px -20px " + glow(m.glowColor, 0.35) } : undefined}
+        >
           {m.backgroundUrl ? (
             <img src={m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
             <div className="absolute inset-0 bg-grid opacity-70" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
           <span className="absolute top-4 right-5 mono text-[10px] tracking-[0.3em] text-white/70">
             MEMBER / {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="absolute top-4 left-5 mono text-[10px] tracking-[0.3em] text-white/40">
-            {String(total).padStart(2, "0")} SIGNALS
-          </span>
-        </div>
-        <div className="relative flex items-center gap-4 p-5 md:p-6 bg-black/80 backdrop-blur">
-          {m.avatar ? (
-            <img
-              src={m.avatar}
-              alt={display}
-              loading="lazy"
-              className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border border-line shrink-0"
-              style={glow(m.glowColor, 0.9) ? { boxShadow: "0 0 16px 3px " + glow(m.glowColor, 0.9) } : undefined}
-            />
-          ) : (
-            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full grid place-items-center border border-line bg-[#0b0b0b] font-display text-2xl shrink-0">
-              {display.slice(0, 1).toUpperCase()}
-            </span>
-          )}
-          <div className="flex-1 min-w-0 text-left">
-            <div className="font-display text-2xl md:text-4xl tracking-wide truncate">{display}</div>
-            <div className="mono text-[10px] md:text-[11px] tracking-[0.2em] text-mist mt-1 truncate">@{m.username} — {m.identity}</div>
-          </div>
-          <span className="mono text-xl text-fog group-hover:text-white group-hover:translate-x-1 transition-all shrink-0" aria-hidden="true">→</span>
-        </div>
-        {m.roles.length > 0 ? (
-          <div className="flex gap-1.5 px-5 md:px-6 pb-5 bg-black/80 overflow-x-auto no-scrollbar">
-            {m.roles.slice(0, 4).map((r) => (
-              <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] border border-line text-fog rounded-full px-3 py-1 flex items-center gap-1.5 shrink-0">
-                <RoleIcon roleId={r.roleId} icon={r.icon} emoji={r.unicodeEmoji} size={12} />
-                {r.name}
-              </span>
-            ))}
-          </div>
-        ) : null}
-      </Link>
+          <span className="absolute bottom-4 right-5 mono text-xl text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" aria-hidden="true">→</span>
+        </Link>
+      </div>
     </div>
   );
 }
