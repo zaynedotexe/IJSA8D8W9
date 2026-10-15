@@ -4,9 +4,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   const roles = [
-    { roleId: "100000000000000001", name: "FOUNDER", priority: 0, visible: true, style: "founder" },
-    { roleId: "100000000000000002", name: "COUNCIL", priority: 10, visible: true, style: "council" },
-    { roleId: "100000000000000003", name: "MEMBER", priority: 50, visible: true, style: "member" }
+    { roleId: "100000000000000001", name: "Founder", priority: 0, visible: true, style: "founder" },
+    { roleId: "100000000000000002", name: "Godly Sins", priority: 10, visible: true, style: "godly" },
+    { roleId: "100000000000000003", name: "Sins", priority: 50, visible: true, style: "sins" },
+    { roleId: "100000000000000004", name: "Shits", priority: 100, visible: true, style: "shits" }
   ];
   for (const r of roles) {
     await prisma.roleConfig.upsert({ where: { roleId: r.roleId }, create: r, update: { name: r.name, priority: r.priority } });
