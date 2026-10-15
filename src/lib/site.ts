@@ -5,7 +5,8 @@ export const LOOP_PHRASE = "Lonestar On Top";
 
 export const SEED_AFFILIATIONS = [
   { id: "seed-aff-1", name: "Lannister", description: "Allied collective standing with Lonestar.", category: "AFFILIATE", order: 0, visible: true, logoUrl: "/aff-lannister.png", externalUrl: null },
-  { id: "seed-aff-2", name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true, logoUrl: "/aff-celestia.png", externalUrl: null }
+  { id: "seed-aff-2", name: "Celestia", description: "Allied community in orbit with Lonestar.", category: "AFFILIATE", order: 1, visible: true, logoUrl: "/aff-celestia.png", externalUrl: null },
+  { id: "seed-aff-3", name: "Lonestar", description: "The home collective.", category: "AFFILIATE", order: 2, visible: true, logoUrl: "/aff-lonestar.png", externalUrl: null }
 ];
 
 export type SeedProfile = {
