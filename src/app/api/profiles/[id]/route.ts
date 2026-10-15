@@ -96,7 +96,8 @@ export async function GET(_req: Request, ctx: { params: { id: string } }) {
         name: a.name,
         logoUrl: a.logoUrl,
         externalUrl: a.externalUrl,
-        isMember: memberGuilds.includes(a.discordGuildId as string)
+        isMember: memberGuilds.includes(a.discordGuildId as string),
+        isOwner: profile.affiliationId === a.id
       }));
     return NextResponse.json({ profile: publicShape(profile as never), roles, servers });
   } catch {

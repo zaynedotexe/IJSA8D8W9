@@ -56,7 +56,7 @@ function localDate(tz: string | null): string {
 export default function MemberPage({ params }: { params: { id: string } }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<{ roleId: string; name: string; icon?: string | null; unicodeEmoji?: string | null }[]>([]);
-  const [servers, setServers] = useState<{ id: string; name: string; logoUrl: string | null; externalUrl: string | null; isMember: boolean }[]>([]);
+  const [servers, setServers] = useState<{ id: string; name: string; logoUrl: string | null; externalUrl: string | null; isMember: boolean; isOwner: boolean }[]>([]);
   const [count, setCount] = useState<number | null>(null);
   const [missing, setMissing] = useState(false);
   const [bgOk, setBgOk] = useState(true);
@@ -241,8 +241,8 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                   <div className="p-4 text-left">
                     <div className="font-display tracking-wide leading-tight">{s.name}</div>
                     <div className="mono text-[10px] tracking-[0.25em] mt-2 flex items-center gap-2">
-                      <span className={"w-1.5 h-1.5 rounded-full " + (s.isMember ? "bg-white" : "bg-[#3a3a3a]")} aria-hidden="true" />
-                      <span className={s.isMember ? "text-white" : "text-mist"}>{s.isMember ? "MEMBER" : "NOT IN SERVER"}</span>
+                      <span className={"w-1.5 h-1.5 rounded-full " + (s.isOwner || s.isMember ? "bg-white" : "bg-[#3a3a3a]")} aria-hidden="true" />
+                      <span className={s.isOwner || s.isMember ? "text-white" : "text-mist"}>{s.isOwner ? "OWNER" : s.isMember ? "MEMBER" : "NOT IN SERVER"}</span>
                     </div>
                     {s.externalUrl ? (
                       <a href={s.externalUrl} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-[0.25em] text-mist hover:text-white mt-2 inline-block">JOIN ↗</a>
