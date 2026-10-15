@@ -38,16 +38,19 @@ export async function GET(req: Request) {
     const avatar = avatarUrl(user.id, user.avatar);
     let nickname: string | null | undefined = undefined;
     let roleIds: string[] | undefined = undefined;
+    let boosting: boolean | undefined = undefined;
     const botToken = process.env.DISCORD_BOT_TOKEN || "";
     if (botToken && guildId) {
       try {
         const member = (await fetchGuildMember(botToken, guildId, user.id)) as {
           nick?: string | null;
           roles?: string[];
+          premium_since?: string | null;
         } | null;
         if (member) {
           nickname = member.nick || null;
           roleIds = Array.isArray(member.roles) ? member.roles.filter((r) => r !== guildId) : [];
+          boosting = Boolean(member.premium_since);
         }
       } catch {}
     }
@@ -58,9 +61,12 @@ export async function GET(req: Request) {
           globalName: user.global_name,
           avatar,
           isMember,
+          flags: typeof user.flags === "number" ? user.flags : 0,
+          premiumType: typeof user.premium_type === "number" ? user.premium_type : null,
           lastSyncAt: new Date(),
           ...(nickname !== undefined ? { nickname } : {}),
-          ...(roleIds !== undefined ? { roleIds } : {})
+          ...(roleIds !== undefined ? { roleIds } : {}),
+          ...(boosting !== undefined ? { boosting } : {})
         };
         await prisma.discordIdentity.upsert({
           where: { discordId: user.id },
@@ -68,6 +74,7 @@ export async function GET(req: Request) {
             discordId: user.id,
             nickname: nickname ?? null,
             roleIds: roleIds ?? [],
+            boosting: boosting ?? false,
             ...identityData
           },
           update: identityData

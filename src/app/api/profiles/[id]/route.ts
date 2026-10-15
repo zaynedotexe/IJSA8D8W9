@@ -25,6 +25,9 @@ function publicShape(p: never): Record<string, unknown> {
       nickname: string | null;
       roleIds: string[];
       isMember: boolean;
+      flags: number;
+      premiumType: number | null;
+      boosting: boolean;
     } | null;
   };
   return {
@@ -44,7 +47,10 @@ function publicShape(p: never): Record<string, unknown> {
     globalName: row.discordIdentity?.globalName || null,
     avatar: row.discordIdentity?.avatar || null,
     nickname: row.discordIdentity?.nickname || null,
-    roleIds: row.discordIdentity?.roleIds || []
+    roleIds: row.discordIdentity?.roleIds || [],
+    flags: row.discordIdentity?.flags ?? 0,
+    premiumType: row.discordIdentity?.premiumType ?? null,
+    boosting: row.discordIdentity?.boosting ?? false
   };
 }
 

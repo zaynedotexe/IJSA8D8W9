@@ -15,6 +15,9 @@ model DiscordIdentity {
   avatar       String?
   nickname     String?
   roleIds      String[] @default([])
+  flags        Int      @default(0)
+  premiumType  Int?
+  boosting     Boolean  @default(false)
   isMember     Boolean  @default(true)
   joinedAt     DateTime?
   lastSyncAt   DateTime @default(now())

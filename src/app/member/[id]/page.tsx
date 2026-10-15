@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import TypewriterBio from "@/components/TypewriterBio";
+import DiscordBadges from "@/components/DiscordBadges";
 import RoleIcon from "@/components/RoleIcon";
 import MusicPlayer from "@/components/MusicPlayer";
 import ProfileViewTracker from "@/components/ProfileViewTracker";
@@ -21,6 +22,9 @@ type Profile = {
   globalName: string | null;
   avatar: string | null;
   nickname: string | null;
+  flags: number;
+  premiumType: number | null;
+  boosting: boolean;
   affiliation: { name: string; description: string; logoUrl?: string | null; externalUrl?: string | null } | null;
 };
 
@@ -173,6 +177,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                 ))}
               </div>
             ) : null}
+            <DiscordBadges flags={profile.flags} premiumType={profile.premiumType} boosting={profile.boosting} />
           </section>
 
           <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3">

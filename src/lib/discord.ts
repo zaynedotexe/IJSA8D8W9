@@ -49,8 +49,10 @@ export async function exchangeCode(code: string): Promise<DiscordTokenResponse> 
 export type DiscordUser = {
   id: string;
   username: string;
-  global_name: string | null;
+  globalName: string | null;
   avatar: string | null;
+  flags?: number;
+  premium_type?: number | null;
 };
 
 export async function fetchDiscordUser(accessToken: string): Promise<DiscordUser> {

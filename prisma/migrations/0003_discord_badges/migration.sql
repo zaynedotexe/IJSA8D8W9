@@ -1,0 +1,3 @@
+ALTER TABLE "DiscordIdentity" ADD COLUMN "flags" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "DiscordIdentity" ADD COLUMN "premiumType" INTEGER;
+ALTER TABLE "DiscordIdentity" ADD COLUMN "boosting" BOOLEAN NOT NULL DEFAULT false;
