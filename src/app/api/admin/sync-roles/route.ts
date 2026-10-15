@@ -15,6 +15,16 @@ export async function GET() {
     });
     if (!res.ok) return NextResponse.json({ error: "Discord rejected the bot token", status: res.status }, { status: 502 });
     const roles = (await res.json()) as { id: string; name: string; icon: string | null; unicode_emoji: string | null }[];
+    let guildName: string | null = null;
+    try {
+      const g = await fetch("https://discord.com/api/v10/guilds/" + guildId + "?with_counts=true", {
+        headers: { Authorization: "Bot " + botToken }
+      });
+      if (g.ok) {
+        const gj = (await g.json()) as { name?: string };
+        guildName = gj.name || null;
+      }
+    } catch {}
     let updated = 0;
     const artwork: string[] = [];
     for (const r of roles) {
@@ -30,7 +40,14 @@ export async function GET() {
         }
       } catch {}
     }
-    return NextResponse.json({ updated, artwork });
+    return NextResponse.json({
+      updated,
+      artwork,
+      guildName,
+      guildId,
+      serverRoleCount: roles.length,
+      serverRoleSample: roles.slice(0, 8).map((r) => ({ id: r.id, name: r.name }))
+    });
   } catch {
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });
   }
