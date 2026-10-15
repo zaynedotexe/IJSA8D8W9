@@ -39,7 +39,7 @@ export default async function AffiliationsPage() {
           <div className="border-t border-line py-20 text-center mono text-xs tracking-[0.3em] text-mist">NO AFFILIATIONS PUBLISHED</div>
         ) : (
           <div className="border-t border-line">
-            {list.map((a: { id: string; name: string; description: string; category?: string; externalUrl?: string; logoUrl?: string }, i: number) => (
+            {list.map((a: { id: string; name: string; description: string; category?: string | null; externalUrl?: string | null; logoUrl?: string | null }, i: number) => (
               <div key={a.id} className="flex flex-col md:flex-row gap-5 md:gap-8 py-8 md:py-10 border-b border-line group">
                 <span className="mono text-[11px] text-mist md:w-10 shrink-0 pt-2">{String(i + 1).padStart(2, "0")}</span>
                 {a.logoUrl ? (

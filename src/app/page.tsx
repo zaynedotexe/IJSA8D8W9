@@ -133,7 +133,7 @@ export default async function Home() {
           <div className="border-t border-line py-14 text-center mono text-xs tracking-[0.3em] text-mist">NO AFFILIATIONS PUBLISHED</div>
         ) : (
           <div className="border-t border-line">
-            {affiliations.slice(0, 4).map((a: { id: string; name: string; description: string; category?: string }, i: number) => (
+            {affiliations.slice(0, 4).map((a: { id: string; name: string; description: string; category?: string | null }, i: number) => (
               <Link key={a.id} href="/affiliations" className="group flex items-center gap-5 py-6 border-b border-line">
                 <span className="mono text-[11px] text-mist w-8">{String(i + 1).padStart(2, "0")}</span>
                 <span className="flex-1">
