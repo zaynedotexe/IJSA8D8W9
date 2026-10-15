@@ -58,15 +58,15 @@ export default async function Home() {
           lines={["$ whoami", "> lonestar", "const lonestar = { mode: 'underground' }", "0xLONESTAR", "$ nmap -sS collective", "[ok] identity verified"]}
           className="opacity-80"
         />
-        <div className="relative px-5 md:px-10 pt-16 md:pt-24 pb-12 max-w-6xl">
+        <div className="relative px-5 md:px-10 pt-16 md:pt-24 pb-12 max-w-6xl mx-auto text-center">
           <div className="animate-enter">
             <div className="mono text-[11px] tracking-[0.45em] text-fog">DISCORD.GG/LONESTAR — UNDERGROUND DIGITAL COLLECTIVE</div>
-            <img src="/lonestar-wordmark.png" alt="LONESTAR" className="w-full max-w-3xl mt-6 select-none drift-slow" loading="eager" />
+            <img src="/lonestar-wordmark.png" alt="LONESTAR" className="w-full max-w-3xl mt-6 mx-auto select-none drift-slow" loading="eager" />
             <h1 className="sr-only">LONESTAR</h1>
-            <p className="text-fog max-w-xl mt-6 leading-relaxed text-sm md:text-base">
+            <p className="text-fog max-w-xl mx-auto mt-6 leading-relaxed text-sm md:text-base">
               A quiet collective of distinct identities. Minimal noise. Precise presence. Membership is earned, profiles are curated, and every signal matters.
             </p>
-            <div className="flex flex-wrap items-center gap-4 mt-8">
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
               <Link href="/members" className="mono text-xs tracking-[0.25em] bg-white text-black rounded-full px-8 py-4 hover:bg-fog transition-colors">
                 ENTER THE INDEX →
               </Link>
@@ -74,7 +74,7 @@ export default async function Home() {
                 AFFILIATES
               </Link>
             </div>
-            <div className="flex flex-wrap gap-x-10 gap-y-2 mt-10 mono text-[11px] tracking-[0.3em] text-mist">
+            <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 mt-10 mono text-[11px] tracking-[0.3em] text-mist">
               <span>EST. IN THE DARK</span>
               <span>MODE — PRIVATE</span>
               <span>{members.length > 0 ? "INDEX — LIVE" : "INDEX — STANDBY"}</span>
