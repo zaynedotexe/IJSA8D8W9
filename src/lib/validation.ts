@@ -6,6 +6,25 @@ const imageUrl = z
   .refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v) || /^\/[^\s]*$/i.test(v), { message: "Invalid URL" })
   .refine((v) => v === "" || /\.(png|jpe?g|gif|webp|mp4|webm)(\?.*)?$/i.test(v), { message: "Only PNG JPG GIF WEBP MP4 WEBM allowed" });
 
+const backgroundUrl = z
+  .string()
+  .max(2048)
+  .refine(
+    (v) => {
+      if (v === "") return true;
+      if (/^\/[^\s]*$/i.test(v)) return /\.(png|jpe?g|gif|webp|mp4|webm)(\?.*)?$/i.test(v);
+      if (!/^https?:\/\/[^\s]+$/i.test(v)) return false;
+      if (/\.(png|jpe?g|gif|webp|mp4|webm)(\?.*)?$/i.test(v)) return true;
+      try {
+        const u = new URL(v);
+        if (u.hostname.includes("youtu.be")) return /^\/[\w-]{11}/.test(u.pathname);
+        if (u.hostname.includes("youtube.com")) return (u.searchParams.get("v") || "").length === 11;
+      } catch {}
+      return false;
+    },
+    { message: "Use PNG JPG GIF MP4 WEBM or a YouTube link" }
+  );
+
 const musicUrl = z
   .string()
   .max(2048)
@@ -33,7 +52,7 @@ const hexColor = z
 
 export const profileUpdateSchema = z.object({
   bio: z.string().max(500).optional(),
-  backgroundUrl: imageUrl.optional(),
+  backgroundUrl: backgroundUrl.optional(),
   glowColor: hexColor.optional(),
   location: z.string().max(120).optional(),
   timezone: z.string().max(80).optional()

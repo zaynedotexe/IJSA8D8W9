@@ -135,6 +135,15 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const display = profile.nickname || profile.globalName || profile.username || "UNKNOWN";
   const showBg = profile.backgroundUrl && bgOk;
   const bgIsVideo = Boolean(profile.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(profile.backgroundUrl));
+  const bgYoutubeId = (() => {
+    if (!profile.backgroundUrl) return null;
+    try {
+      const u = new URL(profile.backgroundUrl);
+      if (u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("?")[0] || null;
+      if (u.hostname.includes("youtube.com")) return u.searchParams.get("v");
+    } catch {}
+    return null;
+  })();
   const needsGate = Boolean(profile.musicUrl && /\.(mp3|ogg|wav|m4a)(\?.*)?$/i.test(profile.musicUrl));
 
   function enter() {
@@ -156,7 +165,15 @@ export default function MemberPage({ params }: { params: { id: string } }) {
       ) : null}
       {showBg ? (
         <div className="fixed inset-0 z-0">
-          {bgIsVideo ? (
+          {bgYoutubeId ? (
+            <iframe
+              src={"https://www.youtube-nocookie.com/embed/" + bgYoutubeId + "?autoplay=1&mute=1&loop=1&playlist=" + bgYoutubeId + "&controls=0&rel=0&playsinline=1"}
+              title="Background video"
+              allow="autoplay; encrypted-media"
+              className="w-full h-full pointer-events-none scale-110"
+              loading="lazy"
+            />
+          ) : bgIsVideo ? (
             <video src={profile.backgroundUrl!} autoPlay muted loop playsInline preload="auto" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
           ) : (
             <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />

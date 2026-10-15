@@ -92,7 +92,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         className="w-full bg-black border border-line p-3 text-sm text-white mono focus:border-white"
         placeholder="Who are you in the dark?"
       />
-      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">BACKGROUND URL — PNG JPG GIF MP4 WEBM</label>
+      <label className="block mono text-[11px] tracking-widest text-mist mt-5 mb-2">BACKGROUND URL — PNG JPG GIF MP4 WEBM YOUTUBE</label>
       <input
         value={form.backgroundUrl}
         onChange={(e) => {
@@ -106,11 +106,19 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
       {form.backgroundUrl ? (
         <div className="mt-3 border border-line h-32 overflow-hidden bg-black relative">
           {!bgError ? (
-            /\.(mp4|webm)(\?.*)?$/i.test(form.backgroundUrl) ? (
-              <video src={form.backgroundUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" onError={() => setBgError(true)} />
-            ) : (
-              <img src={form.backgroundUrl} alt="Background preview" className="w-full h-full object-cover" onError={() => setBgError(true)} />
-            )
+            (() => {
+              let yt: string | null = null;
+              try {
+                const u = new URL(form.backgroundUrl);
+                if (u.hostname.includes("youtu.be")) yt = u.pathname.slice(1).split("?")[0] || null;
+                else if (u.hostname.includes("youtube.com")) yt = u.searchParams.get("v");
+              } catch {}
+              if (yt) return <img src={"https://i.ytimg.com/vi/" + yt + "/hqdefault.jpg"} alt="Video thumbnail preview" className="w-full h-full object-cover" onError={() => setBgError(true)} />;
+              if (/\.(mp4|webm)(\?.*)?$/i.test(form.backgroundUrl)) {
+                return <video src={form.backgroundUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" onError={() => setBgError(true)} />;
+              }
+              return <img src={form.backgroundUrl} alt="Background preview" className="w-full h-full object-cover" onError={() => setBgError(true)} />;
+            })()
           ) : (
             <div className="w-full h-full grid place-items-center mono text-[11px] text-mist tracking-widest">PREVIEW UNAVAILABLE</div>
           )}
