@@ -7,9 +7,23 @@ import RoleIcon from "@/components/RoleIcon";
 import { glow } from "@/lib/glow";
 import type { RowMember } from "@/components/MemberRow";
 
+function ytThumb(url: string): string | null {
+  try {
+    const u = new URL(url);
+    let id: string | null = null;
+    if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1).split("?")[0] || null;
+    else if (u.hostname.includes("youtube.com")) id = u.searchParams.get("v");
+    return id ? "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg" : null;
+  } catch {
+    return null;
+  }
+}
+
 function StackCard({ m, index, total }: { m: RowMember; index: number; total: number }) {
   const display = m.nickname || m.globalName || m.username;
   const artFirst = index % 2 === 1;
+  const isVideo = Boolean(m.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(m.backgroundUrl));
+  const thumb = m.backgroundUrl && !isVideo ? ytThumb(m.backgroundUrl) : null;
   return (
     <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
       <Link
@@ -54,7 +68,11 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
           style={glow(m.glowColor, 0.35) ? { boxShadow: "0 30px 90px -20px " + glow(m.glowColor, 0.35) } : undefined}
         >
           {m.backgroundUrl ? (
-            <img src={m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            isVideo ? (
+              <video src={m.backgroundUrl} autoPlay muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <img src={thumb || m.backgroundUrl} alt="" aria-hidden="true" loading="lazy" referrerPolicy="no-referrer" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            )
           ) : (
             <div className="absolute inset-0 bg-grid opacity-70" />
           )}
