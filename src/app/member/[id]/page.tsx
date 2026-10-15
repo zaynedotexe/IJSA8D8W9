@@ -170,9 +170,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-center">
+          <div className="order-2 lg:order-1 lg:h-[600px] float-a">
           <aside
             onMouseEnter={spinOnce}
-            className="rounded-3xl glass shine-card float-a spin-fast p-6 text-center order-2 lg:order-1 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
+            className="rounded-3xl glass shine-card spin-fast p-6 text-center h-full lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
@@ -187,6 +188,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
               {today ? <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">◷ {today}</div> : null}
             </div>
           </aside>
+          </div>
 
           <section className="text-center px-2 order-1 lg:order-2">
             <div className="relative inline-block">
@@ -235,9 +237,10 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             <DiscordBadges flags={profile.flags} premiumType={profile.premiumType} boosting={profile.boosting} />
           </section>
 
+          <div className="order-3 lg:h-[600px] float-b">
           <aside
             onMouseEnter={spinOnce}
-            className="rounded-3xl glass shine-card float-b spin-fast p-5 order-3 lg:h-[600px] lg:overflow-hidden lg:flex lg:flex-col"
+            className="rounded-3xl glass shine-card spin-fast p-5 h-full lg:overflow-hidden lg:flex lg:flex-col"
             style={glow(profile.glowColor, 0.28) ? { boxShadow: "0 0 44px -8px " + glow(profile.glowColor, 0.28) } : undefined}
           >
             <div className="mono text-[10px] tracking-[0.35em] text-mist px-1 mb-3 shrink-0">SERVERS</div>
@@ -267,6 +270,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
               </div>
             )}
           </aside>
+          </div>
         </div>
 
         <div className="mono text-[10px] tracking-[0.35em] text-mist mt-10 text-center">LONESTAR ON TOP — MADE BY EGO</div>
