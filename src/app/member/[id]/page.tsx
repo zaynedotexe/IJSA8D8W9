@@ -20,13 +20,13 @@ type Profile = {
   globalName: string | null;
   avatar: string | null;
   nickname: string | null;
-  affiliation: { name: string; description: string; logoUrl?: string | null } | null;
+  affiliation: { name: string; description: string; logoUrl?: string | null; externalUrl?: string | null } | null;
 };
 
 function localTime(tz: string | null): string {
   if (!tz) return "";
   try {
-    return new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date());
+    return new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date());
   } catch {
     return "";
   }
@@ -35,7 +35,9 @@ function localTime(tz: string | null): string {
 function localDate(tz: string | null): string {
   if (!tz) return "";
   try {
-    return new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: tz }).format(new Date());
+    const d = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: tz }).format(new Date());
+    const off = new Intl.DateTimeFormat("en-US", { timeZoneName: "shortOffset", timeZone: tz }).formatToParts(new Date()).find((p) => p.type === "timeZoneName")?.value || "";
+    return d + (off ? " " + off.toLowerCase().replace("gmt", "gmt") : "");
   } catch {
     return "";
   }
@@ -108,94 +110,94 @@ export default function MemberPage({ params }: { params: { id: string } }) {
   const showBg = profile.backgroundUrl && bgOk;
 
   return (
-    <div className="relative isolate">
+    <div className="relative isolate overflow-hidden">
       <ProfileViewTracker id={profile.id} />
       {showBg ? (
         <div className="fixed inset-0 z-0">
           <img src={profile.backgroundUrl!} alt="" loading="eager" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setBgOk(false)} />
-          <div className="absolute inset-0 bg-black/75" />
+          <div className="absolute inset-0 bg-black/80" />
         </div>
       ) : (
         <div className="fixed inset-0 z-0 bg-[#050505] bg-grid" />
       )}
-      <div className="relative z-10 px-4 md:px-10 py-8 md:py-12 max-w-3xl mx-auto">
-        <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
+      <img src="/lonestar-emblem.png" alt="" aria-hidden="true" className="pointer-events-none fixed -right-10 top-16 w-56 opacity-[0.07] rotate-12 z-0 hidden md:block" />
+      <img src="/lonestar-emblem.png" alt="" aria-hidden="true" className="pointer-events-none fixed -left-12 bottom-24 w-64 opacity-[0.07] -rotate-12 z-0 hidden md:block" />
 
-        <div className="mt-5 rounded-3xl border border-line bg-black/90 backdrop-blur overflow-hidden">
-          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-line">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]" aria-hidden="true" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]" aria-hidden="true" />
-            <span className="w-2.5 h-2.5 rounded-full bg-white" aria-hidden="true" />
-            <span className="mono text-[11px] tracking-[0.2em] text-fog ml-3 truncate">
-              lonestar@network:~<span className="caret-blink">█</span>
-            </span>
-            <span className="mono text-[10px] tracking-[0.25em] text-mist ml-auto shrink-0 hidden sm:inline">
-              {count === null ? "—" : count.toLocaleString()} VIEWS
-            </span>
-          </div>
+      <div className="relative z-10 px-4 md:px-8 pt-6 pb-14 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between">
+          <Link href="/members" className="mono text-[11px] tracking-widest text-mist hover:text-white">← DIRECTORY</Link>
+          <span className="mono text-[10px] tracking-[0.3em] text-mist hidden sm:inline">lonestar@network:~<span className="caret-blink">█</span></span>
+        </div>
 
-          <div className="p-6 md:p-9">
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
-              <div className="relative shrink-0">
-                {profile.avatar ? (
-                  <img src={profile.avatar} alt={display} className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-2 ring-white/80 ring-offset-4 ring-offset-black" />
-                ) : (
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full grid place-items-center border border-line font-display text-4xl bg-[#0b0b0b]">{display.slice(0, 1).toUpperCase()}</div>
-                )}
-                <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-white border-2 border-black" aria-label="online" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="mono text-[10px] tracking-[0.35em] text-mist">$ whoami</div>
-                <h1 className="font-display text-3xl md:text-5xl tracking-wide break-words leading-none mt-1">{display}</h1>
-                <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">@{profile.username} — {profile.identity}</div>
-                <div className="mono text-[11px] tracking-[0.15em] text-fog mt-3">
-                  {profile.location || "UNDISCLOSED"}
-                  {profile.timezone ? " · " + (clock || "--:--") + (today ? " · " + today : "") : ""}
-                </div>
-              </div>
-            </div>
-
-            {roles.length > 0 ? (
-              <div className="mt-7">
-                <div className="mono text-[10px] tracking-[0.35em] text-mist">$ roles --show</div>
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {roles.map((r) => (
-                    <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] bg-white text-black rounded-full px-3.5 py-1.5">{r.name}</span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <div className="mt-7 rounded-2xl bg-[#0b0b0b] border border-line p-5">
-              <div className="mono text-[10px] tracking-[0.35em] text-mist">$ cat transmission.txt</div>
-              <div className="mono text-sm leading-relaxed mt-3 min-h-[3rem] whitespace-pre-wrap break-words">
-                <TypewriterBio bio={profile.bio} />
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <div className="mono text-[10px] tracking-[0.35em] text-mist mb-3">$ now-playing</div>
+        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-5 mt-8 items-start">
+          <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-6 text-center lg:-rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-2 lg:order-1">
+            <div className="mono text-[10px] tracking-[0.35em] text-mist">♪ NOW PLAYING</div>
+            <div className="mt-4 text-left">
               <MusicPlayer url={profile.musicUrl} />
             </div>
+            <div className="border-t border-line mt-5 pt-5">
+              <div className="mono text-[11px] tracking-[0.2em] text-fog">{profile.location ? "◉ " + profile.location.toLowerCase() : "◉ undisclosed"}</div>
+              {profile.timezone ? (
+                <div className="font-display text-4xl mt-2 tabular-nums">{clock || "--:--"}</div>
+              ) : null}
+              {today ? <div className="mono text-[11px] tracking-[0.2em] text-mist mt-2">◷ {today}</div> : null}
+            </div>
+          </aside>
 
+          <section className="text-center px-2 order-1 lg:order-2">
+            <div className="relative inline-block">
+              {profile.avatar ? (
+                <img src={profile.avatar} alt={display} className="w-36 h-36 md:w-44 md:h-44 rounded-full object-cover ring-2 ring-white/80 ring-offset-8 ring-offset-black mx-auto" />
+              ) : (
+                <div className="w-36 h-36 md:w-44 md:h-44 rounded-full grid place-items-center border border-line font-display text-6xl bg-[#0b0b0b] mx-auto">{display.slice(0, 1).toUpperCase()}</div>
+              )}
+              <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border-4 border-black" aria-label="online" />
+            </div>
+            <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-6 break-words leading-none">{display}</h1>
+            <div className="mono text-xs tracking-[0.25em] text-mist mt-3">@{profile.username}</div>
+            <div className="mono text-[11px] tracking-[0.2em] text-fog mt-1">{profile.identity}</div>
+            <div className="mono text-sm leading-relaxed mt-5 min-h-[2.5rem] whitespace-pre-wrap break-words max-w-md mx-auto">
+              <TypewriterBio bio={profile.bio} />
+            </div>
+            <div className="mono text-[11px] tracking-[0.25em] text-fog mt-4">
+              ◉ {count === null ? "—" : count.toLocaleString()} VIEWS
+            </div>
+            {roles.length > 0 ? (
+              <div className="flex flex-wrap justify-center gap-1.5 mt-5">
+                {roles.map((r) => (
+                  <span key={r.roleId} className="mono text-[10px] tracking-[0.2em] bg-white text-black rounded-full px-3.5 py-1.5">{r.name}</span>
+                ))}
+              </div>
+            ) : null}
+          </section>
+
+          <aside className="rounded-3xl border border-line bg-black/90 backdrop-blur p-5 lg:rotate-2 lg:hover:rotate-0 transition-transform duration-300 order-3">
             {profile.affiliation ? (
-              <Link href="/affiliations" className="group flex items-center gap-4 mt-5 rounded-2xl border border-line p-4 hover:border-white transition-colors">
+              <Link href="/affiliations" className="group block rounded-2xl overflow-hidden border border-line hover:border-white transition-colors">
                 {profile.affiliation.logoUrl ? (
-                  <img src={profile.affiliation.logoUrl} alt={profile.affiliation.name} loading="lazy" className="w-12 h-12 rounded-xl object-cover border border-line grayscale shrink-0" />
+                  <img src={profile.affiliation.logoUrl} alt={profile.affiliation.name} loading="lazy" className="w-full h-36 object-cover grayscale" />
                 ) : (
-                  <span className="w-12 h-12 rounded-xl grid place-items-center border border-line font-display text-xl bg-[#0b0b0b] shrink-0">{profile.affiliation.name.slice(0, 1)}</span>
+                  <div className="w-full h-36 grid place-items-center bg-[#0b0b0b] font-display text-4xl">{profile.affiliation.name.slice(0, 1)}</div>
                 )}
-                <span className="flex-1 min-w-0">
-                  <span className="mono text-[10px] tracking-[0.3em] text-mist block">SERVER BANNER — AFFILIATED</span>
-                  <span className="font-display tracking-wide block truncate">{profile.affiliation.name}</span>
-                </span>
-                <span className="mono group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
+                <div className="p-4 text-left">
+                  <div className="font-display tracking-wide leading-tight">{profile.affiliation.name}</div>
+                  <div className="text-fog text-xs mt-1 line-clamp-2">{profile.affiliation.description}</div>
+                  <div className="mono text-[10px] tracking-[0.25em] text-mist mt-2">AFFILIATED →</div>
+                </div>
               </Link>
             ) : null}
-
-            <div className="mono text-[10px] tracking-[0.35em] text-mist mt-8 text-center">LONESTAR ON TOP — MADE BY EGO</div>
-          </div>
+            <Link href="/" className="group block rounded-2xl overflow-hidden border border-line hover:border-white transition-colors mt-4">
+              <img src="/lonestar-wordmark.png" alt="Lonestar" loading="lazy" className="w-full h-28 object-contain bg-[#0b0b0b] p-4" />
+              <div className="p-4 text-left">
+                <div className="font-display tracking-wide leading-tight">LONESTAR</div>
+                <div className="text-fog text-xs mt-1">Underground digital collective.</div>
+                <div className="mono text-[10px] tracking-[0.25em] text-mist mt-2">HOME →</div>
+              </div>
+            </Link>
+          </aside>
         </div>
+
+        <div className="mono text-[10px] tracking-[0.35em] text-mist mt-10 text-center">LONESTAR ON TOP — MADE BY EGO</div>
       </div>
     </div>
   );
