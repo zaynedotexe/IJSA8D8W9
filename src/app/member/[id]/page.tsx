@@ -207,14 +207,6 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                 </div>
               ))
             )}
-            <Link href="/" className="group block rounded-2xl overflow-hidden border border-line hover:border-white transition-colors mt-4">
-              <img src="/lonestar-wordmark.png" alt="Lonestar" loading="lazy" className="w-full h-28 object-contain bg-[#0b0b0b] p-4" />
-              <div className="p-4 text-left">
-                <div className="font-display tracking-wide leading-tight">LONESTAR</div>
-                <div className="text-fog text-xs mt-1">Underground digital collective.</div>
-                <div className="mono text-[10px] tracking-[0.25em] text-mist mt-2">HOME →</div>
-              </div>
-            </Link>
           </aside>
         </div>
 
