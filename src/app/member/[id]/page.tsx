@@ -274,7 +274,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
             {servers.filter((s) => s.isMember || s.isOwner).length === 0 ? (
               <div className="rounded-2xl border border-line p-4 mono text-[10px] tracking-[0.25em] text-mist">NO LINKED SERVERS</div>
             ) : (
-              <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto thin-scroll lg:-mx-1 lg:px-1">
+              <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto no-scrollbar lg:-mx-1 lg:px-1">
               {servers.filter((s) => s.isMember || s.isOwner).map((s) => (
                 <div key={s.id} className="rounded-2xl overflow-hidden border border-line mb-3 last:mb-0 group/logo">
                   {s.logoUrl ? (
