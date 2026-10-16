@@ -33,7 +33,6 @@ function publicShape(p: never): Record<string, unknown> {
       flags: number;
       premiumType: number | null;
       boosting: boolean;
-      status: string | null;
     } | null;
   };
   return {
@@ -61,8 +60,7 @@ function publicShape(p: never): Record<string, unknown> {
     roleIds: row.discordIdentity?.roleIds || [],
     flags: row.discordIdentity?.flags ?? 0,
     premiumType: row.discordIdentity?.premiumType ?? null,
-    boosting: row.discordIdentity?.boosting ?? false,
-    status: row.discordIdentity?.status || null
+    boosting: row.discordIdentity?.boosting ?? false
   };
 }
 

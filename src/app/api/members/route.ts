@@ -60,7 +60,6 @@ export async function GET(req: Request) {
         roleIds: rids,
         roles: rids.map((rid) => roleById.get(rid)!),
         affiliation: p.affiliation,
-        status: id.status || null,
         priority: pri
       };
     });

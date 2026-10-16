@@ -19,7 +19,6 @@ model DiscordIdentity {
   flags        Int      @default(0)
   premiumType  Int?
   boosting     Boolean  @default(false)
-  status       String?  @db.VarChar(16)
   isMember     Boolean  @default(true)
   joinedAt     DateTime?
   lastSyncAt   DateTime @default(now())
