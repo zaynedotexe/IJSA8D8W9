@@ -264,8 +264,8 @@ export default function MembersPage() {
       </section>
 
       {members.length > 1 ? (
-        <div className="shrink-0 flex items-center justify-center gap-5 pb-6 pt-2">
-          <div className="flex items-center gap-2 max-w-[70vw] overflow-x-auto no-scrollbar py-2" role="tablist" aria-label="Members">
+        <div className="shrink-0 flex items-center justify-center pb-6 pt-2 md:absolute md:right-6 md:top-1/2 md:-translate-y-1/2 md:pb-0 md:pt-0">
+          <div className="flex items-center gap-2 max-w-[70vw] overflow-x-auto no-scrollbar py-2 md:flex-col md:max-h-[46vh] md:max-w-none md:overflow-y-auto md:overflow-x-hidden md:py-0" role="tablist" aria-label="Members">
             {members.slice(0, 40).map((m, i) => (
               <button
                 key={m.id}
@@ -275,7 +275,9 @@ export default function MembersPage() {
                 onClick={() => jump(i)}
                 className={
                   "rounded-full shrink-0 transition-all " +
-                  (i === spot % members.length ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-[#2e2e2e] hover:bg-fog")
+                  (i === spot % members.length
+                    ? "w-8 h-2.5 md:w-2.5 md:h-8 bg-white"
+                    : "w-2.5 h-2.5 bg-[#2e2e2e] hover:bg-fog")
                 }
               />
             ))}
