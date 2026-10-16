@@ -69,28 +69,28 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
     setHovering(false);
   }
   return (
-    <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-center">
+    <div className="grid md:grid-cols-12 gap-5 md:gap-0 items-center">
       <Link
           href={"/" + encodeURIComponent(m.username || m.id)}
-        className={"group flex items-center gap-4 md:col-span-4 " + (artFirst ? "md:order-2" : "md:order-1")}
+        className={"group flex items-center gap-4 md:col-span-5 " + (artFirst ? "md:order-2 md:justify-end md:text-right" : "md:order-1")}
       >
         {m.avatar ? (
           <img
             src={m.avatar}
             alt={display}
             loading="lazy"
-            className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-line shrink-0 transition-transform duration-500 group-hover:scale-105"
+            className={"w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-line shrink-0 transition-transform duration-500 group-hover:scale-105 " + (artFirst ? "md:order-2" : "")}
             style={glow(m.glowColor, 0.9) ? { boxShadow: "0 0 18px 4px " + glow(m.glowColor, 0.9) } : undefined}
           />
         ) : (
-          <span className="w-16 h-16 md:w-20 md:h-20 rounded-full grid place-items-center border border-line bg-[#0b0b0b] font-display text-3xl shrink-0">
+          <span className={"w-16 h-16 md:w-20 md:h-20 rounded-full grid place-items-center border border-line bg-[#0b0b0b] font-display text-3xl shrink-0 " + (artFirst ? "md:order-2" : "")}>
             {display.slice(0, 1).toUpperCase()}
           </span>
         )}
-        <span className="min-w-0 text-left">
-          <span className="font-display text-2xl md:text-4xl tracking-wide block truncate">{display}</span>
-          <span className="mono text-[10px] md:text-[11px] tracking-[0.2em] text-mist mt-1 block truncate">@{m.username}</span>
-          <span className="mono text-[10px] tracking-[0.2em] text-fog mt-1 hidden md:flex flex-wrap gap-1.5">
+        <span className={"min-w-0 text-left " + (artFirst ? "md:order-1 md:text-right" : "")}>
+          <span className="font-display text-2xl md:text-3xl tracking-wide block break-words">{display}</span>
+          <span className="mono text-[10px] md:text-[11px] tracking-[0.2em] text-mist mt-1 block">@{m.username}</span>
+          <span className={"mono text-[10px] tracking-[0.2em] text-fog mt-1 hidden md:flex flex-wrap gap-1.5 " + (artFirst ? "md:justify-end" : "")}>
             {m.roles.slice(0, 3).map((r) => (
               <span key={r.roleId} className="border border-line rounded-full px-2.5 py-0.5 flex items-center gap-1">
                 <RoleIcon roleId={r.roleId} icon={r.icon} emoji={r.unicodeEmoji} size={11} />
@@ -100,16 +100,16 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
           </span>
         </span>
       </Link>
-      <div ref={cardRef} className={"md:col-span-8 md:[perspective:1400px] " + (artFirst ? "md:order-1" : "md:order-2")}>
+      <div ref={cardRef} className={"md:col-span-7 md:[perspective:1400px] " + (artFirst ? "md:order-1 md:-mr-12 md:z-10" : "md:order-2 md:-ml-12 md:z-10")}>
         <Link
         href={"/" + encodeURIComponent(m.username || m.id)}
           aria-label={"Open " + display + "'s profile"}
           onMouseEnter={onEnter}
           onMouseLeave={onLeave}
           className={
-            "group relative block w-full h-64 md:h-[380px] rounded-[28px] border border-white/10 overflow-hidden transition-transform duration-500 ease-out " +
+            "group relative block w-full h-64 md:h-[360px] rounded-[28px] border-[6px] border-black overflow-hidden transition-transform duration-500 ease-out " +
             "md:hover:[transform:rotateY(0deg)_rotateX(0deg)_translateY(-6px)] " +
-            (artFirst ? "md:[transform:rotateY(5deg)_rotateX(1deg)]" : "md:[transform:rotateY(-5deg)_rotateX(1deg)]")
+            (artFirst ? "md:[transform:rotateY(8deg)_rotateX(2deg)]" : "md:[transform:rotateY(-8deg)_rotateX(2deg)]")
           }
           style={glow(m.glowColor, 0.35) ? { boxShadow: "0 30px 90px -20px " + glow(m.glowColor, 0.35) } : undefined}
         >
