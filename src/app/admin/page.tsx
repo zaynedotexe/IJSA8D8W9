@@ -19,6 +19,14 @@ export default function AdminPage() {
   const [musicOpen, setMusicOpen] = useState<string | null>(null);
   const [musicDraft, setMusicDraft] = useState({ musicUrl: "", trackTitle: "", trackArtist: "", trackCover: "" });
   const [musicMsg, setMusicMsg] = useState("");
+  const [editOpen, setEditOpen] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState({ identity: "", displayName: "" });
+  const [editMsg, setEditMsg] = useState("");
+
+  async function refreshProfiles() {
+    const refreshed = await fetch("/api/admin/profiles", { cache: "no-store" }).then((r) => r.json()).catch(() => null);
+    if (refreshed) setProfiles(refreshed.profiles || []);
+  }
 
   useEffect(() => {
     fetch("/api/admin/stats", { cache: "no-store" })
@@ -121,11 +129,25 @@ export default function AdminPage() {
       <div className="mt-8">
         <div className="mono text-[11px] tracking-[0.3em] text-mist mb-3">PROFILES — {(profiles as unknown[]).length}</div>
         <div className="border border-line divide-y divide-[#1a1a1a]">
-          {(profiles as { id: string; discordId: string; identity: string; approved: boolean; visible: boolean; musicUrl: string | null; trackTitle: string | null; trackArtist: string | null; trackCover: string | null; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
+          {(profiles as { id: string; discordId: string; identity: string; displayName: string | null; approved: boolean; visible: boolean; musicUrl: string | null; trackTitle: string | null; trackArtist: string | null; trackCover: string | null; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
             <div key={p.id} className="p-4 bg-black">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="mono text-xs text-white">{p.discordIdentity?.username || p.discordId}</span>
+                <span className="mono text-xs text-white">{p.displayName || p.discordIdentity?.username || p.discordId}</span>
                 <span className="mono text-[10px] tracking-widest text-mist">{p.identity} · {p.approved ? "APPROVED" : "HIDDEN"}{p.musicUrl ? " · ♪" : ""}</span>
+                <button
+                  onClick={() => {
+                    if (editOpen === p.id) {
+                      setEditOpen(null);
+                    } else {
+                      setEditOpen(p.id);
+                      setEditDraft({ identity: p.identity || "", displayName: p.displayName || "" });
+                      setEditMsg("");
+                    }
+                  }}
+                  className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white ml-auto"
+                >
+                  EDIT
+                </button>
                 <button
                   onClick={() => {
                     if (musicOpen === p.id) {
@@ -150,6 +172,45 @@ export default function AdminPage() {
                 </button>
                 <a href={"/" + encodeURIComponent(p.discordIdentity?.username || p.id)} target="_blank" rel="noreferrer" className="mono text-[10px] tracking-widest text-mist hover:text-white">OPEN ↗</a>
               </div>
+              {editOpen === p.id ? (
+                <div className="grid md:grid-cols-2 gap-2.5 mt-4">
+                  <input
+                    value={editDraft.identity}
+                    onChange={(e) => setEditDraft({ ...editDraft, identity: e.target.value.slice(0, 60) })}
+                    placeholder="IDENTITY — e.g. SINS"
+                    className="bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                  />
+                  <input
+                    value={editDraft.displayName}
+                    onChange={(e) => setEditDraft({ ...editDraft, displayName: e.target.value.slice(0, 100) })}
+                    placeholder="DISPLAY NAME (OPTIONAL)"
+                    className="bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                  />
+                  <div className="md:col-span-2 flex items-center gap-3">
+                    <button
+                      onClick={async () => {
+                        setEditMsg("");
+                        const res = await fetch("/api/admin/profiles/" + p.id, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(editDraft)
+                        });
+                        const data = await res.json().catch(() => null);
+                        if (!res.ok) {
+                          setEditMsg(data?.error || "Save failed");
+                          return;
+                        }
+                        setEditMsg("SAVED");
+                        await refreshProfiles();
+                      }}
+                      className="mono text-[11px] tracking-[0.25em] bg-white text-black px-5 py-2.5"
+                    >
+                      SAVE
+                    </button>
+                    {editMsg ? <span className="mono text-[10px] tracking-widest text-fog">{editMsg}</span> : null}
+                  </div>
+                </div>
+              ) : null}
               {musicOpen === p.id ? (
                 <div className="grid md:grid-cols-2 gap-2.5 mt-4">
                   <input

@@ -50,6 +50,7 @@ export async function GET(req: Request) {
         discordId: p.discordId,
         identity: p.identity,
         bio: p.bio,
+        displayName: p.displayName,
         backgroundUrl: p.backgroundUrl,
         glowColor: p.glowColor ?? null,
         username: id.username,

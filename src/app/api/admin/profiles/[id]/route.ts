@@ -27,6 +27,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
       where: { id: ctx.params.id },
       data: {
         identity: parsed.data.identity,
+        displayName: parsed.data.displayName !== undefined ? (parsed.data.displayName.trim() === "" ? null : parsed.data.displayName.trim().slice(0, 100)) : undefined,
         bio: parsed.data.bio,
         approved: parsed.data.approved,
         visible: parsed.data.visible,

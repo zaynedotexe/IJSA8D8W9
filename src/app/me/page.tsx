@@ -99,7 +99,7 @@ export default function MePage() {
     );
   }
 
-  const display = profile.nickname || profile.globalName || profile.username || "YOU";
+  const display = profile.displayName || profile.nickname || profile.globalName || profile.username || "YOU";
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-12">

@@ -7,6 +7,7 @@ import { glow } from "@/lib/glow";
 export type RowMember = {
   id: string;
   identity: string;
+  displayName?: string | null;
   glowColor?: string | null;
   backgroundUrl?: string | null;
   username: string;
@@ -18,7 +19,7 @@ export type RowMember = {
 };
 
 export default function MemberRow({ m, index }: { m: RowMember; index: number }) {
-  const display = m.nickname || m.globalName || m.username;
+  const display = m.displayName || m.nickname || m.globalName || m.username;
   return (
     <Link
       href={"/" + encodeURIComponent(m.username || m.id)}

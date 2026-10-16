@@ -16,6 +16,7 @@ function publicShape(p: never): Record<string, unknown> {
     trackArtist: string | null;
     trackCover: string | null;
     glowColor: string | null;
+    displayName: string | null;
     location: string | null;
     timezone: string | null;
     views: number;
@@ -45,6 +46,7 @@ function publicShape(p: never): Record<string, unknown> {
     trackArtist: row.trackArtist,
     trackCover: row.trackCover,
     glowColor: row.glowColor,
+    displayName: row.displayName,
     location: row.location,
     timezone: row.timezone,
     views: row.views,
@@ -135,6 +137,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
       where: { id: ctx.params.id },
       data: {
         bio: data.bio !== undefined ? data.bio.slice(0, 500) : undefined,
+        displayName: data.displayName !== undefined ? (data.displayName.trim() === "" ? null : data.displayName.trim().slice(0, 100)) : undefined,
         backgroundUrl: data.backgroundUrl !== undefined ? (data.backgroundUrl === "" ? null : data.backgroundUrl) : undefined,
         glowColor: data.glowColor !== undefined ? (data.glowColor.trim() === "" ? null : data.glowColor.trim().slice(0, 7)) : undefined,
         location: data.location !== undefined ? (data.location === "" ? null : data.location.slice(0, 120)) : undefined,

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export type EditableProfile = {
   id: string;
   bio: string;
+  displayName: string | null;
   backgroundUrl: string | null;
   glowColor: string | null;
   musicUrl: string | null;
@@ -18,6 +19,7 @@ export type EditableProfile = {
 export default function ProfileEditor({ initial, onSaved }: { initial: EditableProfile; onSaved: (p: EditableProfile) => void }) {
   const [form, setForm] = useState({
     bio: initial.bio || "",
+    displayName: initial.displayName || "",
     backgroundUrl: initial.backgroundUrl || "",
     glowColor: initial.glowColor || "",
     location: initial.location || "",
@@ -50,6 +52,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           bio: form.bio.slice(0, 500),
+          displayName: form.displayName,
           backgroundUrl: form.backgroundUrl,
           glowColor: form.glowColor,
           location: form.location,
@@ -64,6 +67,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
         onSaved({
           id: initial.id,
           bio: data.profile.bio,
+          displayName: data.profile.displayName,
           backgroundUrl: data.profile.backgroundUrl,
           glowColor: data.profile.glowColor,
           musicUrl: data.profile.musicUrl,
@@ -84,6 +88,13 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
   return (
     <div className="rounded-3xl border border-line bg-[#0b0b0b] p-5 md:p-7">
       <div className="mono text-[11px] tracking-[0.3em] text-fog mb-5">EDIT PROFILE</div>
+      <label className="block mono text-[11px] tracking-widest text-mist mb-2">DISPLAY NAME — OPTIONAL</label>
+      <input
+        value={form.displayName}
+        onChange={(e) => setForm({ ...form, displayName: e.target.value.slice(0, 100) })}
+        className="w-full bg-black border border-line p-3 text-sm mono text-white focus:border-white mb-5"
+        placeholder="Your name on Lonestar"
+      />
       <label className="block mono text-[11px] tracking-widest text-mist mb-2">BIOGRAPHY — {form.bio.length}/500</label>
       <textarea
         value={form.bio}
@@ -208,6 +219,7 @@ export default function ProfileEditor({ initial, onSaved }: { initial: EditableP
           onClick={() =>
             setForm({
               bio: initial.bio || "",
+              displayName: initial.displayName || "",
               backgroundUrl: initial.backgroundUrl || "",
               glowColor: initial.glowColor || "",
               location: initial.location || "",

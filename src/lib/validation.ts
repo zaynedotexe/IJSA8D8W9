@@ -52,6 +52,7 @@ const hexColor = z
 
 export const profileUpdateSchema = z.object({
   bio: z.string().max(500).optional(),
+  displayName: z.string().max(100).optional(),
   backgroundUrl: backgroundUrl.optional(),
   glowColor: hexColor.optional(),
   location: z.string().max(120).optional(),
@@ -65,6 +66,7 @@ export const adminProfileSchema = z.object({
   approved: z.boolean().optional(),
   visible: z.boolean().optional(),
   affiliationId: z.string().nullable().optional(),
+  displayName: z.string().max(100).optional(),
   musicUrl: musicUrl.optional(),
   trackTitle: z.string().max(160).optional(),
   trackArtist: z.string().max(160).optional(),

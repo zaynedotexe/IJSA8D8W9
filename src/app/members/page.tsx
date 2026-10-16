@@ -29,7 +29,7 @@ function ytId(url: string): string | null {
 }
 
 function StackCard({ m, index, total }: { m: RowMember; index: number; total: number }) {
-  const display = m.nickname || m.globalName || m.username;
+  const display = m.displayName || m.nickname || m.globalName || m.username;
   const artFirst = index % 2 === 1;
   const isVideo = Boolean(m.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(m.backgroundUrl));
   const ytid = m.backgroundUrl && !isVideo ? ytId(m.backgroundUrl) : null;

@@ -28,6 +28,7 @@ type Profile = {
   globalName: string | null;
   avatar: string | null;
   nickname: string | null;
+  displayName: string | null;
   flags: number;
   premiumType: number | null;
   boosting: boolean;
@@ -134,7 +135,7 @@ export default function MemberPage({ params }: { params: { id: string } }) {
     );
   }
 
-  const display = profile.nickname || profile.globalName || profile.username || "UNKNOWN";
+  const display = profile.displayName || profile.nickname || profile.globalName || profile.username || "UNKNOWN";
   const showBg = profile.backgroundUrl && bgOk;
   const bgIsVideo = Boolean(profile.backgroundUrl && /\.(mp4|webm)(\?.*)?$/i.test(profile.backgroundUrl));
   const bgYoutubeId = (() => {

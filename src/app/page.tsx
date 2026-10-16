@@ -30,6 +30,7 @@ async function getData() {
         return {
           id: p.id,
           identity: p.identity,
+          displayName: p.displayName,
           glowColor: p.glowColor,
           username: id.username,
           globalName: id.globalName,
