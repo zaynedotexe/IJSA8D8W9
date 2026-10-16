@@ -149,6 +149,10 @@ export default function MembersPage() {
   const [members, setMembers] = useState<RowMember[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [spot, setSpot] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const coolRef = useRef(0);
+  const touchRef = useRef<number | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -157,48 +161,116 @@ export default function MembersPage() {
       .then((d) => {
         setMembers(d.members || []);
         setTotal(d.total || 0);
+        setSpot(0);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (members.length < 2 || paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setInterval(() => setSpot((s) => (s + 1) % members.length), 8000);
+    return () => window.clearInterval(t);
+  }, [members, paused]);
+
+  function step(dir: number) {
+    if (members.length < 2) return;
+    const now = Date.now();
+    if (now - coolRef.current < 900) return;
+    coolRef.current = now;
+    setSpot((s) => (s + dir + members.length) % members.length);
+  }
+
+  const current = members.length ? members[spot % members.length] : null;
+
   return (
-    <div>
-      <section className="relative overflow-hidden">
+    <div className="lg:h-[calc(100svh-0px)] lg:min-h-[620px] lg:overflow-hidden flex flex-col">
+      <section className="relative overflow-hidden shrink-0">
         <CodeTexture lines={["$ enum index", "> resolving identities", "[ok] hierarchy loaded", "0xMEMBERS"]} />
-        <div className="relative px-5 md:px-10 pt-14 md:pt-20 pb-8 max-w-6xl">
-          <div className="mono text-[11px] tracking-[0.45em] text-fog">DIRECTORY — {loading ? "···" : total + " SIGNAL" + (total === 1 ? "" : "S")}</div>
-          <h1 className="font-display text-6xl md:text-8xl mt-3 leading-[0.9]">
-            MEM<span className="text-outline">BERS</span>
-          </h1>
+        <div className="relative px-5 md:px-10 pt-8 md:pt-10 pb-4 max-w-6xl flex items-end justify-between gap-4">
+          <div>
+            <div className="mono text-[11px] tracking-[0.45em] text-fog">DIRECTORY — {loading ? "···" : total + " SIGNAL" + (total === 1 ? "" : "S")}</div>
+            <h1 className="font-display text-5xl md:text-7xl mt-2 leading-[0.9]">
+              MEM<span className="text-outline">BERS</span>
+            </h1>
+          </div>
+          {current ? (
+            <div className="mono text-[11px] tracking-[0.35em] text-mist shrink-0">
+              {String((spot % members.length) + 1).padStart(2, "0")} / {String(members.length).padStart(2, "0")}
+            </div>
+          ) : null}
         </div>
       </section>
 
-      <section className="px-5 md:px-10 pb-20 max-w-6xl">
-        <div className="border-t border-line pt-10 flex flex-col gap-10 md:gap-14">
-          {loading ? (
-            [0, 1].map((i) => (
-              <div key={i} className="w-full md:w-[68%] rounded-[28px] border border-line overflow-hidden animate-pulse">
-                <div className="h-64 md:h-80 bg-[#101010]" />
-                <div className="p-6 bg-black flex gap-4">
-                  <div className="w-16 h-16 rounded-full bg-[#141414]" />
-                  <div className="flex-1">
-                    <div className="h-7 w-48 bg-[#141414] rounded-full" />
-                    <div className="h-3 w-28 bg-[#101010] rounded-full mt-2" />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : members.length === 0 ? (
-            <div className="py-20 text-center">
-              <div className="font-display text-3xl text-outline-faint">NO SIGNAL</div>
-              <div className="text-fog text-sm mt-3">The index is empty — check back soon.</div>
-            </div>
-          ) : (
-            members.map((m, i) => <StackCard key={m.id} m={m} index={i} total={total} />)
-          )}
-        </div>
+      <section
+        className="relative flex-1 flex flex-col justify-center px-5 md:px-10 max-w-6xl w-full mx-auto min-h-0"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onWheel={(e) => {
+          if (Math.abs(e.deltaY) < 12) return;
+          step(e.deltaY > 0 ? 1 : -1);
+        }}
+        onTouchStart={(e) => {
+          touchRef.current = e.touches[0].clientY;
+        }}
+        onTouchEnd={(e) => {
+          if (touchRef.current === null) return;
+          const dy = touchRef.current - e.changedTouches[0].clientY;
+          touchRef.current = null;
+          if (Math.abs(dy) < 50) return;
+          step(dy > 0 ? 1 : -1);
+        }}
+      >
+        {loading ? (
+          <div className="w-full animate-pulse">
+            <div className="h-64 md:h-[320px] rounded-[28px] bg-[#101010]" />
+          </div>
+        ) : !current ? (
+          <div className="py-16 text-center">
+            <div className="font-display text-3xl text-outline-faint">NO SIGNAL</div>
+            <div className="text-fog text-sm mt-3">The index is empty — check back soon.</div>
+          </div>
+        ) : (
+          <div key={current.id} className="animate-enter">
+            <StackCard m={current} index={spot % members.length} total={total} />
+          </div>
+        )}
       </section>
+
+      {members.length > 1 ? (
+        <div className="shrink-0 flex items-center justify-center gap-5 pb-6 pt-2">
+          <button
+            onClick={() => step(-1)}
+            aria-label="Previous member"
+            className="mono text-lg text-fog hover:text-white w-11 h-11 rounded-full border border-line hover:border-white transition-colors"
+          >
+            ←
+          </button>
+          <div className="flex items-center gap-2 max-w-[50vw] overflow-x-auto no-scrollbar py-2" role="tablist" aria-label="Members">
+            {members.slice(0, 40).map((m, i) => (
+              <button
+                key={m.id}
+                role="tab"
+                aria-selected={i === spot % members.length}
+                aria-label={(m.nickname || m.username) ?? "member"}
+                onClick={() => setSpot(i)}
+                className={
+                  "rounded-full shrink-0 transition-all " +
+                  (i === spot % members.length ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-[#2e2e2e] hover:bg-fog")
+                }
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => step(1)}
+            aria-label="Next member"
+            className="mono text-lg text-fog hover:text-white w-11 h-11 rounded-full border border-line hover:border-white transition-colors"
+          >
+            →
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
