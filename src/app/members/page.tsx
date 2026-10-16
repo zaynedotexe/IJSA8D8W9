@@ -88,7 +88,13 @@ function StackCard({ m, index, total }: { m: RowMember; index: number; total: nu
           </span>
         )}
         <span className={"min-w-0 text-left " + (artFirst ? "md:order-1 md:text-right" : "")}>
-          <span className="font-display text-2xl md:text-3xl tracking-wide block break-words">{display}</span>
+          <span className="font-display text-2xl md:text-3xl tracking-wide block break-words" aria-label={display}>
+            {display.split("").map((c, i) => (
+              <span key={index + "-" + i} className="letter-rise" style={{ animationDelay: Math.min(i, 24) * 28 + "ms" }} aria-hidden="true">
+                {c === " " ? " " : c}
+              </span>
+            ))}
+          </span>
           <span className="mono text-[10px] md:text-[11px] tracking-[0.2em] text-mist mt-1 block">@{m.username}</span>
           <span className={"mono text-[10px] tracking-[0.2em] text-fog mt-1 hidden md:flex flex-wrap gap-1.5 " + (artFirst ? "md:justify-end" : "")}>
             {m.roles.slice(0, 3).map((r) => (
@@ -150,6 +156,7 @@ export default function MembersPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [spot, setSpot] = useState(0);
+  const [dir, setDir] = useState(1);
   const [paused, setPaused] = useState(false);
   const coolRef = useRef(0);
   const touchRef = useRef<number | null>(null);
@@ -174,12 +181,19 @@ export default function MembersPage() {
     return () => window.clearInterval(t);
   }, [members, paused]);
 
-  function step(dir: number) {
+  function step(d: number) {
     if (members.length < 2) return;
     const now = Date.now();
     if (now - coolRef.current < 900) return;
     coolRef.current = now;
-    setSpot((s) => (s + dir + members.length) % members.length);
+    setDir(d >= 0 ? 1 : -1);
+    setSpot((s) => (s + d + members.length) % members.length);
+  }
+
+  function jump(i: number) {
+    if (members.length < 2) return;
+    setDir(i >= spot % members.length ? 1 : -1);
+    setSpot(i);
   }
 
   const current = members.length ? members[spot % members.length] : null;
@@ -232,7 +246,7 @@ export default function MembersPage() {
             <div className="text-fog text-sm mt-3">The index is empty — check back soon.</div>
           </div>
         ) : (
-          <div key={current.id} className="animate-enter">
+          <div key={current.id} className={dir >= 0 ? "rise" : "fall"}>
             <StackCard m={current} index={spot % members.length} total={total} />
           </div>
         )}
@@ -240,21 +254,14 @@ export default function MembersPage() {
 
       {members.length > 1 ? (
         <div className="shrink-0 flex items-center justify-center gap-5 pb-6 pt-2">
-          <button
-            onClick={() => step(-1)}
-            aria-label="Previous member"
-            className="mono text-lg text-fog hover:text-white w-11 h-11 rounded-full border border-line hover:border-white transition-colors"
-          >
-            ←
-          </button>
-          <div className="flex items-center gap-2 max-w-[50vw] overflow-x-auto no-scrollbar py-2" role="tablist" aria-label="Members">
+          <div className="flex items-center gap-2 max-w-[70vw] overflow-x-auto no-scrollbar py-2" role="tablist" aria-label="Members">
             {members.slice(0, 40).map((m, i) => (
               <button
                 key={m.id}
                 role="tab"
                 aria-selected={i === spot % members.length}
                 aria-label={(m.nickname || m.username) ?? "member"}
-                onClick={() => setSpot(i)}
+                onClick={() => jump(i)}
                 className={
                   "rounded-full shrink-0 transition-all " +
                   (i === spot % members.length ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-[#2e2e2e] hover:bg-fog")
@@ -262,13 +269,6 @@ export default function MembersPage() {
               />
             ))}
           </div>
-          <button
-            onClick={() => step(1)}
-            aria-label="Next member"
-            className="mono text-lg text-fog hover:text-white w-11 h-11 rounded-full border border-line hover:border-white transition-colors"
-          >
-            →
-          </button>
         </div>
       ) : null}
     </div>
