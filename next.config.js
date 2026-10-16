@@ -36,6 +36,9 @@ const nextConfig = {
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
+  },
+  async rewrites() {
+    return [{ source: "/aff-:file*", destination: "/ally-:file*" }];
   }
 };
 
