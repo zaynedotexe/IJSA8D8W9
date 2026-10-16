@@ -160,6 +160,7 @@ export default function MembersPage() {
   const [paused, setPaused] = useState(false);
   const coolRef = useRef(0);
   const touchRef = useRef<number | null>(null);
+  const stageRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -180,6 +181,19 @@ export default function MembersPage() {
     const t = window.setInterval(() => setSpot((s) => (s + 1) % members.length), 8000);
     return () => window.clearInterval(t);
   }, [members, paused]);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    function onWheel(e: WheelEvent) {
+      if (members.length < 2) return;
+      if (Math.abs(e.deltaY) < 12) return;
+      e.preventDefault();
+      step(e.deltaY > 0 ? 1 : -1);
+    }
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [members.length]);
 
   function step(d: number) {
     if (members.length < 2) return;
@@ -218,13 +232,10 @@ export default function MembersPage() {
       </section>
 
       <section
+        ref={stageRef}
         className="relative flex-1 flex flex-col justify-center px-5 md:px-10 max-w-6xl w-full mx-auto min-h-0"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
-        onWheel={(e) => {
-          if (Math.abs(e.deltaY) < 12) return;
-          step(e.deltaY > 0 ? 1 : -1);
-        }}
         onTouchStart={(e) => {
           touchRef.current = e.touches[0].clientY;
         }}
