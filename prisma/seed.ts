@@ -5,8 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   const roles = [
     { roleId: "575999868804399119", name: "Founder", priority: 0, visible: true, style: "founder" },
-    { roleId: "641532736024215553", name: "Godly Sins", priority: 10, visible: true, style: "godly" },
-    { roleId: "863299682045132800", name: "Godly Sins", priority: 10, visible: true, style: "godly" },
+    { roleId: "1523858026656825457", name: "Godly Sins", priority: 10, visible: true, style: "godly" },
     { roleId: "746710459859861524", name: "Sins", priority: 50, visible: true, style: "sins" },
     { roleId: "744471375208775722", name: "Sins", priority: 50, visible: true, style: "sins" },
     { roleId: "1254411720651444329", name: "Sins", priority: 50, visible: true, style: "sins" },
