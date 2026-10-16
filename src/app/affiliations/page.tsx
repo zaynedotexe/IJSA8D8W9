@@ -7,12 +7,18 @@ import { SEED_AFFILIATIONS } from "@/lib/site";
 
 export const revalidate = 60;
 
+function clean<T extends { logoUrl?: string | null }>(a: T): T {
+  if (a.logoUrl && a.logoUrl.startsWith("/aff-")) return { ...a, logoUrl: a.logoUrl.replace("/aff-", "/ally-") };
+  return a;
+}
+
 async function getData() {
-  if (!prisma) return SEED_AFFILIATIONS;
+  if (!prisma) return SEED_AFFILIATIONS.map(clean);
   try {
-    return await prisma.affiliation.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
+    const rows = await prisma.affiliation.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
+    return rows.map(clean);
   } catch {
-    return SEED_AFFILIATIONS;
+    return SEED_AFFILIATIONS.map(clean);
   }
 }
 
