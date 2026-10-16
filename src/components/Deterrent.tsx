@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DisableDevtool from "disable-devtool";
 
 const BYPASS_KEY = "lonestar-ego-shield";
 const BYPASS_PARAM = "ddtk";
@@ -79,6 +80,27 @@ export default function Deterrent() {
     }, 1800);
     document.addEventListener("contextmenu", onMenu, { capture: true });
     document.addEventListener("keydown", onKeys, { capture: true });
+    try {
+      DisableDevtool({
+        interval: 400,
+        disableMenu: false,
+        stopIntervalTime: 3600000,
+        clearIntervalWhenDevOpenTrigger: false,
+        detectors: "all",
+        clearLog: true,
+        disableSelect: false,
+        disableCopy: false,
+        disableCut: false,
+        disablePaste: false,
+        disableIframeParents: true,
+        seo: true,
+        url: "",
+        ondevtoolopen: () => {
+          trip();
+        },
+        ondevtoolclose: null
+      });
+    } catch {}
     return () => {
       window.clearInterval(sizeTimer);
       window.clearInterval(debugTimer);
