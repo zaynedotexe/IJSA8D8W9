@@ -1,0 +1,18 @@
+services:
+  - type: worker
+    name: lonestar-bot
+    runtime: docker
+    plan: free
+    dockerfilePath: ./bot/Dockerfile
+    dockerContext: ./bot
+    envVars:
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: DISCORD_GUILD_ID
+        sync: false
+      - key: SITE_URL
+        sync: false
+      - key: BOT_SHARED_SECRET
+        sync: false
+      - key: SYNC_INTERVAL_MINUTES
+        value: 15
