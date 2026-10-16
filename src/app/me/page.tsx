@@ -116,7 +116,6 @@ export default function MePage() {
       <div className="mt-8">
         <ProfileEditor initial={profile} onSaved={(p) => setProfile({ ...profile, ...p })} />
       </div>
-      <p className="mono text-[10px] tracking-widest text-mist mt-6">OWNERSHIP IS VERIFIED BY DISCORD USER ID ON THE SERVER. EDITING SOMEONE ELSE&apos;S PROFILE IS BLOCKED.</p>
     </div>
   );
 }
