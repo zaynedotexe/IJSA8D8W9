@@ -213,10 +213,10 @@ export default function MembersPage() {
   const current = members.length ? members[spot % members.length] : null;
 
   return (
-    <div className="lg:h-[calc(100svh-0px)] lg:min-h-[620px] lg:overflow-hidden flex flex-col">
+    <div className="h-[100svh] min-h-[600px] overflow-hidden flex flex-col">
       <section className="relative overflow-hidden shrink-0">
         <CodeTexture lines={["$ enum index", "> resolving identities", "[ok] hierarchy loaded", "0xMEMBERS"]} />
-        <div className="relative px-5 md:px-10 pt-8 md:pt-10 pb-4 max-w-6xl flex items-end justify-between gap-4">
+        <div className="relative px-5 md:px-10 pt-6 md:pt-8 pb-3 max-w-6xl flex items-end justify-between gap-4">
           <div>
             <div className="mono text-[11px] tracking-[0.45em] text-fog">DIRECTORY — {loading ? "···" : total + " SIGNAL" + (total === 1 ? "" : "S")}</div>
             <h1 className="font-display text-5xl md:text-7xl mt-2 leading-[0.9]">
