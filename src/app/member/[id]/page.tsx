@@ -213,7 +213,13 @@ export default function MemberPage({ params }: { params: { id: string } }) {
           </div>
 
           <section className="text-center px-2 order-1 lg:order-2">
-            <div className="relative inline-block" onMouseEnter={() => setBurst((b) => b + 1)}>
+            <div
+              className="relative inline-block"
+              onMouseEnter={() => {
+                setBurst((b) => b + 1);
+                window.setTimeout(() => setBurst(0), 900);
+              }}
+            >
               {glow(profile.glowColor, 0.55) ? (
                 <div className="absolute -inset-3 rounded-full glow-spin" aria-hidden="true" style={{ background: "conic-gradient(from 0deg, transparent 0%, " + glow(profile.glowColor, 0.85) + " 12%, transparent 26%, transparent 55%, " + glow(profile.glowColor, 0.6) + " 68%, transparent 82%)", filter: "blur(10px)" }} />
               ) : null}
