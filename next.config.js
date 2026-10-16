@@ -12,7 +12,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https: http:",
       "media-src 'self' https: http: blob:",
-      "frame-src 'self' https://open.spotify.com https://embed.spotify.com https://www.youtube.com https://www.youtube-nocookie.com",
+      "frame-src 'self' https://open.spotify.com https://embed.spotify.com https://www.youtube.com https://www.youtube-nocookie.com https://discord.com https://discordapp.com",
       "connect-src 'self' https://discord.com https://cdn.discordapp.com",
       "font-src 'self' data:",
       "object-src 'none'",

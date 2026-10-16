@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CodeTexture from "@/components/CodeTexture";
 import Ticker from "@/components/Ticker";
+import ServerWidget from "@/components/ServerWidget";
 import { accentFor } from "@/lib/site";
 import { prisma } from "@/lib/db";
 import { SEED_AFFILIATIONS } from "@/lib/site";
@@ -76,6 +77,10 @@ export default async function AffiliationsPage() {
             ))}
           </div>
         )}
+        <div className="mt-14 max-w-xl">
+          <div className="mono text-[11px] tracking-[0.4em] text-mist mb-4">CONNECT</div>
+          <ServerWidget guildId="1504264104804876309" name="Lonestar" />
+        </div>
         <div className="mt-10">
           <Link href="/" className="mono text-[11px] tracking-widest text-mist hover:text-white">← HOME</Link>
         </div>
