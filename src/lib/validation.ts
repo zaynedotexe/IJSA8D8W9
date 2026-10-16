@@ -98,6 +98,7 @@ export const syncPayloadSchema = z.object({
   avatar: z.string().max(2048).nullable().optional(),
   nickname: z.string().max(100).nullable().optional(),
   roleIds: z.array(z.string().max(32)).max(100).optional(),
+  status: z.enum(["online", "idle", "dnd", "offline"]).nullable().optional(),
   roles: z
     .array(
       z.object({

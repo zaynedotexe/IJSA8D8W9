@@ -6,6 +6,7 @@ import TypewriterBio from "@/components/TypewriterBio";
 import YouTubeBg from "@/components/YouTubeBg";
 import DiscordBadges from "@/components/DiscordBadges";
 import RoleIcon from "@/components/RoleIcon";
+import PresenceDot from "@/components/PresenceDot";
 import { accentFor } from "@/lib/site";
 import { glow } from "@/lib/glow";
 import MusicPlayer from "@/components/MusicPlayer";
@@ -32,6 +33,7 @@ type Profile = {
   flags: number;
   premiumType: number | null;
   boosting: boolean;
+  status: string | null;
   glowColor: string | null;
   affiliation: { name: string; description: string; logoUrl?: string | null; externalUrl?: string | null } | null;
 };
@@ -233,7 +235,9 @@ export default function MemberPage({ params }: { params: { id: string } }) {
                   {display.slice(0, 1).toUpperCase()}
                 </div>
               )}
-              <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-white border-4 border-black z-10" aria-label="online" />
+              <span className="absolute bottom-2 right-2 z-10">
+                <PresenceDot status={profile.status} size={24} />
+              </span>
               {burst > 0 ? (
                 <span
                   key={burst}

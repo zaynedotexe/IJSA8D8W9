@@ -7,6 +7,7 @@ import { glow } from "@/lib/glow";
 export type RowMember = {
   id: string;
   identity: string;
+  status?: string | null;
   displayName?: string | null;
   glowColor?: string | null;
   backgroundUrl?: string | null;

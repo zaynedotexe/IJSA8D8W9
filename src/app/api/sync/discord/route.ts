@@ -44,6 +44,7 @@ export async function POST(req: Request) {
           avatar: d.avatar || null,
           nickname: d.nickname || null,
           roleIds: d.roleIds || [],
+          status: d.status || undefined,
           isMember: d.isMember ?? true,
           joinedAt: joinedAt || undefined,
           lastSyncAt: new Date()

@@ -12,7 +12,7 @@ if (!BOT_TOKEN || !GUILD_ID || !SITE_URL || !SHARED_SECRET) {
 }
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
   partials: [Partials.GuildMember, Partials.User]
 });
 
@@ -32,6 +32,7 @@ function toPayload(member) {
     nickname: member.nickname || null,
     roleIds: roles.map((r) => r.id),
     roles: roles.map((r) => ({ id: r.id, name: r.name, icon: r.icon || null, unicodeEmoji: r.unicodeEmoji || null })),
+    status: member.presence ? member.presence.status : null,
     isMember: true,
     joinedAt: member.joinedAt ? member.joinedAt.toISOString() : null
   };
