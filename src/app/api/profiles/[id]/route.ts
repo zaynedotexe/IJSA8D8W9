@@ -96,7 +96,7 @@ export async function GET(_req: Request, ctx: { params: { id: string } }) {
       .map((a) => ({
         id: a.id,
         name: a.name,
-        logoUrl: a.logoUrl,
+        logoUrl: a.logoUrl && a.logoUrl.startsWith("/aff-") ? a.logoUrl.replace("/aff-", "/ally-") : a.logoUrl,
         externalUrl: a.externalUrl,
         isMember: memberGuilds.includes(a.discordGuildId as string),
         isOwner: profile.affiliationId === a.id
