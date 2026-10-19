@@ -22,6 +22,9 @@ export default function AdminPage() {
   const [editOpen, setEditOpen] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState({ identity: "", displayName: "" });
   const [editMsg, setEditMsg] = useState("");
+  const [bgOpen, setBgOpen] = useState<string | null>(null);
+  const [bgDraft, setBgDraft] = useState({ backgroundUrl: "" });
+  const [bgMsg, setBgMsg] = useState("");
 
   async function refreshProfiles() {
     const refreshed = await fetch("/api/admin/profiles", { cache: "no-store" }).then((r) => r.json()).catch(() => null);
@@ -129,7 +132,7 @@ export default function AdminPage() {
       <div className="mt-8">
         <div className="mono text-[11px] tracking-[0.3em] text-mist mb-3">PROFILES — {(profiles as unknown[]).length}</div>
         <div className="border border-line divide-y divide-[#1a1a1a]">
-          {(profiles as { id: string; discordId: string; identity: string; displayName: string | null; approved: boolean; visible: boolean; musicUrl: string | null; trackTitle: string | null; trackArtist: string | null; trackCover: string | null; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
+          {(profiles as { id: string; discordId: string; identity: string; displayName: string | null; approved: boolean; visible: boolean; backgroundUrl: string | null; musicUrl: string | null; trackTitle: string | null; trackArtist: string | null; trackCover: string | null; discordIdentity: { username: string } | null }[]).slice(0, 60).map((p) => (
             <div key={p.id} className="p-4 bg-black">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="mono text-xs text-white">{p.displayName || p.discordIdentity?.username || p.discordId}</span>
@@ -166,6 +169,20 @@ export default function AdminPage() {
                   className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white ml-auto"
                 >
                   MUSIC
+                </button>
+                <button
+                  onClick={() => {
+                    if (bgOpen === p.id) {
+                      setBgOpen(null);
+                    } else {
+                      setBgOpen(p.id);
+                      setBgDraft({ backgroundUrl: p.backgroundUrl || "" });
+                      setBgMsg("");
+                    }
+                  }}
+                  className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white"
+                >
+                  BG
                 </button>
                 <button onClick={() => toggle(p)} className="mono text-[10px] tracking-widest border border-line px-3 py-1.5 text-fog hover:text-white">
                   {p.approved ? "DISABLE" : "APPROVE"}
@@ -262,6 +279,40 @@ export default function AdminPage() {
                       SAVE MUSIC
                     </button>
                     {musicMsg ? <span className="mono text-[10px] tracking-widest text-fog">{musicMsg}</span> : null}
+                  </div>
+                </div>
+              ) : null}
+              {bgOpen === p.id ? (
+                <div className="grid gap-2.5 mt-4">
+                  <input
+                    value={bgDraft.backgroundUrl}
+                    onChange={(e) => setBgDraft({ backgroundUrl: e.target.value.slice(0, 2048) })}
+                    placeholder="BACKGROUND URL — IMAGE / VIDEO / YOUTUBE"
+                    className="bg-[#0b0b0b] border border-line px-4 py-2.5 mono text-xs text-white"
+                    inputMode="url"
+                  />
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={async () => {
+                        setBgMsg("");
+                        const res = await fetch("/api/admin/profiles/" + p.id, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(bgDraft)
+                        });
+                        const data = await res.json().catch(() => null);
+                        if (!res.ok) {
+                          setBgMsg(data?.error || "Save failed");
+                          return;
+                        }
+                        setBgMsg("SAVED");
+                        await refreshProfiles();
+                      }}
+                      className="mono text-[11px] tracking-[0.25em] bg-white text-black px-5 py-2.5"
+                    >
+                      SAVE BACKGROUND
+                    </button>
+                    {bgMsg ? <span className="mono text-[10px] tracking-widest text-fog">{bgMsg}</span> : null}
                   </div>
                 </div>
               ) : null}

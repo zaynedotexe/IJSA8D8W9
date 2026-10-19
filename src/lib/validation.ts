@@ -67,6 +67,7 @@ export const adminProfileSchema = z.object({
   visible: z.boolean().optional(),
   affiliationId: z.string().nullable().optional(),
   displayName: z.string().max(100).optional(),
+  backgroundUrl: backgroundUrl.optional(),
   musicUrl: musicUrl.optional(),
   trackTitle: z.string().max(160).optional(),
   trackArtist: z.string().max(160).optional(),

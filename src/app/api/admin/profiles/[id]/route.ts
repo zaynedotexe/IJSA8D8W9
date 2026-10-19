@@ -32,6 +32,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
         approved: parsed.data.approved,
         visible: parsed.data.visible,
         affiliationId: parsed.data.affiliationId === undefined ? undefined : parsed.data.affiliationId,
+        backgroundUrl: parsed.data.backgroundUrl !== undefined ? (parsed.data.backgroundUrl === "" ? null : parsed.data.backgroundUrl) : undefined,
         musicUrl: parsed.data.musicUrl !== undefined ? (parsed.data.musicUrl === "" ? null : parsed.data.musicUrl) : undefined,
         trackTitle: parsed.data.trackTitle !== undefined ? (parsed.data.trackTitle === "" ? null : parsed.data.trackTitle.slice(0, 160)) : undefined,
         trackArtist: parsed.data.trackArtist !== undefined ? (parsed.data.trackArtist === "" ? null : parsed.data.trackArtist.slice(0, 160)) : undefined,
