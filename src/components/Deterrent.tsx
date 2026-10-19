@@ -31,6 +31,7 @@ export default function Deterrent() {
   useEffect(() => {
     if (bypassed()) return;
     let triggered = false;
+    let redirectTimer: number | undefined;
     const fine = window.matchMedia("(pointer: fine)").matches;
     function trip() {
       if (triggered || bypassed()) return;
@@ -39,6 +40,9 @@ export default function Deterrent() {
         console.clear();
       } catch {}
       setBlocked(true);
+      redirectTimer = window.setTimeout(() => {
+        window.location.replace("https://www.google.com");
+      }, 3000);
     }
     function onMenu(e: Event) {
       if (!fine) return;
@@ -104,6 +108,7 @@ export default function Deterrent() {
     return () => {
       window.clearInterval(sizeTimer);
       window.clearInterval(debugTimer);
+      if (redirectTimer) window.clearTimeout(redirectTimer);
       document.removeEventListener("contextmenu", onMenu, { capture: true });
       document.removeEventListener("keydown", onKeys, { capture: true });
     };
